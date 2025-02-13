@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-path
+        name="external"
+        path="." />
+    <cache-path
+        name="cache"
+        path="." />
+    <files-path
+        name="my_images"
+        path="images/" />
+    <external-path
+        name="external_files"
+        path="." />
+    <files-path
+        name="internal_files"
+        path="." />
+    <external-path
+        name="external_files"
+        path="." />
+    <external-cache-path
+        name="external_cache"
+        path="." />
+    <files-path
+        name="files"
+        path="." />
+    <files-path
+        name="Docx"
+        path="." />
+    <files-path
+        name="pdf"
+        path="." />
+    <root-path
+        name="root"
+        path="." />
+    <external-media-path
+        name="files"
+        path="." />
+    <external-files-path
+        name="files"
+        path="/" />
+    <external-files-path name="vcf" path="." />
+</paths>
+
+
+
+
+

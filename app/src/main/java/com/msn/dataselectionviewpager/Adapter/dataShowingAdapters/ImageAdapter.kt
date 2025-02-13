@@ -1,0 +1,92 @@
+package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters
+
+import android.content.Context
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import androidx.recyclerview.widget.RecyclerView
+import com.msn.dataselectionviewpager.R
+ import java.io.File
+
+
+import androidx.core.content.FileProvider
+import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
+import com.msn.smartswitch.Models.AppConstant.selectedPath
+
+
+class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
+
+    private var uris = listOf<Uri>()
+    private var paths = listOf<String>()
+
+    inner class ImageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val imageView: ImageView = itemView.findViewById(R.id.imageView)
+        val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
+
+        fun bind(uri: Uri) {
+            // Convert file:// URI to content:// URI if necessary
+            val contentUri = if (uri.scheme == "file") {
+                convertFileUriToContentUri(uri)
+            } else {
+                uri // Already a content:// URI
+            }
+
+            // Decode and display the image from contentUri
+            val inputStream = itemView.context.contentResolver.openInputStream(contentUri)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+            imageView.setImageBitmap(bitmap)
+
+            // Set checkbox state based on whether the URI is in the selected list
+            checkBox.isChecked = selectedPath.contains(uri.path)
+
+            // Handle checkbox click to add/remove URI from selected list
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    SelectedItemsUriManager.addUri(contentUri)
+                    selectedPath.add(uri.path!!)
+                    Log.d("Selected URIs", "Added URI: $contentUri")
+                    Log.d("Selected path", "Added selectedPath: $selectedPath")
+                } else {
+                    SelectedItemsUriManager.removeUri(contentUri)
+                    Log.d("Selected URIs", "Removed URI: $contentUri")
+                }
+            }
+        }
+
+        // Helper function to convert file URI to content URI using FileProvider
+        private fun convertFileUriToContentUri(fileUri: Uri): Uri {
+            val file = File(fileUri.path ?: "")
+            return FileProvider.getUriForFile(
+                context,
+                "com.msn.dataselectionviewpager.fileprovider", // Replace with your own provider authorities
+                file
+            )
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+        val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_image, parent, false)
+        return ImageViewHolder(itemView)
+    }
+
+    override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+        val uri = uris[position]
+//        val path = paths[position]
+        Log.d("onBindViewHolder", "onBindViewHolder: uri: $uri, path: ")
+        holder.bind(uri)
+    }
+
+    override fun getItemCount(): Int {
+        return uris.size
+    }
+
+    fun submitList(uris: List<Uri>) {
+        this.uris = uris
+        notifyDataSetChanged()
+    }
+}

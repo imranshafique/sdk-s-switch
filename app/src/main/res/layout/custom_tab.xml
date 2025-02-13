@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:padding="@dimen/_5sdp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+   >
+
+     <ImageView
+        android:id="@+id/tabIcon"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:layout_gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/imagesicon" /> <!-- replace with actual icon -->
+
+    <!-- Text for the tab -->
+    <TextView
+        android:id="@+id/tabText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:gravity="center"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_8ssp"
+        android:maxLines="1"
+         app:layout_constraintStart_toStartOf="@+id/tabIcon"
+        app:layout_constraintTop_toBottomOf="@+id/tabIcon"
+        app:layout_constraintEnd_toEndOf="@+id/tabIcon"
+        />
+    <View
+        android:id="@+id/tabIndicator"
+        android:layout_width="@dimen/_30sdp"
+        android:layout_height="@dimen/_2sdp"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:background="@android:color/holo_blue_dark"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/tabText"
+        app:layout_constraintEnd_toEndOf="@+id/tabText"
+        app:layout_constraintTop_toBottomOf="@+id/tabText"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

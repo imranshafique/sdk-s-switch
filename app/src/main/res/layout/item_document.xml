@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="8dp">
+<ImageView
+   android:id="@+id/documentIcon"
+    android:layout_width="@dimen/_25sdp"
+    android:layout_height="@dimen/_25sdp"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"/>
+    <TextView
+        android:id="@+id/documentName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Document Name"
+        android:textSize="16sp"
+        android:layout_marginStart="@dimen/_10sdp"
+        app:layout_constraintStart_toEndOf="@+id/documentIcon"
+        app:layout_constraintTop_toTopOf="@+id/documentIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/documentIcon"/>
+
+    <CheckBox
+        android:id="@+id/checkBox"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:button="@null"
+    android:background="@drawable/circular_checkbox"
+        app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintTop_toTopOf="@+id/documentName"
+        app:layout_constraintBottom_toBottomOf="@+id/documentName"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
