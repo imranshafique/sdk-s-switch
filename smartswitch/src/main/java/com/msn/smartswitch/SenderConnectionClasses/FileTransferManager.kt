@@ -27,6 +27,7 @@ class FileTransferSDK(
         fun onFileSendingProgress(progress: Float)
     }
 
+    // TODO: Remove  these injections
     @Inject
     lateinit var wifiP2pManager: WifiP2pManager
 
@@ -83,6 +84,8 @@ class FileTransferSDK(
         }
         return totalSize
     }
+
+    // TODO: make suspend 
     private fun sendData(file: File, dataOutputStream: DataOutputStream, socket: Socket) {
         try {
             if (!socket.isClosed) {
@@ -132,6 +135,7 @@ class FileTransferSDK(
             listener?.onFileSendFailure("OutOfMemoryError: ${e.message}")
         }
     }
+    // TODO: Remove commented Code 
 
 
     /*   private fun sendData(file: File, dataOutputStream: DataOutputStream, socket: Socket) {

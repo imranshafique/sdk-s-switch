@@ -1,6 +1,6 @@
 package com.msn.smartswitch.SenderConnectionClasses
 
-
+// TODO: Remove Extra imports
 import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -124,6 +124,8 @@ class P2PConnectionManager(private val context: Context) {
                         Log.d(TAG, "onSuccess: wifiDisConnected")
                         startDiscovery()
                     }
+
+                    // TODO: empty method
                     override fun onFailure(reason: Int) {
                     }
                 })
@@ -144,6 +146,7 @@ class P2PConnectionManager(private val context: Context) {
             }
         })
     }
+    // TODO: Remove this method
 
     fun requestConnectionInfo() {
         wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { connInfo ->

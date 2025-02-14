@@ -9,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.*
 
+// TODO: Remove Extra parameter
 class DataReceiverManger(private val context: Context) {
 
     interface ReceiverListener {
@@ -34,6 +35,7 @@ class DataReceiverManger(private val context: Context) {
     private val existingSocket = Sockets.getSocket()
     var totalBytesToReceive: Long = 0L
     var totalBytesReceived: Long = 0L
+    // TODO: Make suspend
 
     fun startReceive() {
         Log.d(TAG, "startReceive: Attempting to receive files")
@@ -79,7 +81,7 @@ class DataReceiverManger(private val context: Context) {
         }
     }
 
-
+    // TODO: Remove Extra Param
     private fun receiveFile(count: Int) {
         try {
             val socket = existingSocket
@@ -183,7 +185,7 @@ class DataReceiverManger(private val context: Context) {
         }
     }
 
-
+// TODO:  Remove Extra Code
 
     /*private fun receiveFile(count: Int) {
            try {

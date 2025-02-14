@@ -4,7 +4,6 @@ package com.msn.smartswitch.AppPrefs
 import android.content.Context
 import android.net.Uri
 import android.widget.Toast
-import java.nio.file.Path
 
 object SelectedItemsUriManager {
     // This holds the list of selected image URIs
@@ -38,6 +37,7 @@ object SelectedItemsUriManager {
         return listOfSelectedItemsUris
     }
 
+    // TODO:   Remove this method as it is not used
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show()
     }

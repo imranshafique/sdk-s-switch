@@ -6,7 +6,6 @@ import java.net.InetAddress
 
 object AppConstant {
     const val TAG = "NewSmartSwitch"
-
     @JvmStatic
     var serverAddress: InetAddress? = null
       var listOfSelectedItemsFilesLength: ArrayList<Long> = ArrayList()

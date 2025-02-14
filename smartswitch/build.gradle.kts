@@ -29,6 +29,7 @@ android {
         viewBinding=true
         buildConfig=true
     }
+    // user jave version 17
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -37,6 +38,8 @@ android {
         jvmTarget = "11"
     }
 }
+// remove unused lib
+// update dependenciesas well 
 
 dependencies {
 
