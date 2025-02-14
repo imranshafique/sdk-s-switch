@@ -1,15 +1,19 @@
 package com.msn.smartswitch.Transfer
 
-import android.content.Context
 import android.os.Environment
 import android.util.Log
-import com.ft.features.local_transfer.smart_switch.connection.Sockets
+import com.msn.smartswitch.ServerClient.Sockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.*
+import java.io.BufferedOutputStream
+import java.io.DataInputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
-class DataReceiverManger(private val context: Context) {
+class DataReceiverManger {
 
     interface ReceiverListener {
         fun onFileReceiveSuccess()
@@ -32,10 +36,10 @@ class DataReceiverManger(private val context: Context) {
     private var dataInputStream: DataInputStream? = null
     private var filesReceived = 0
     private val existingSocket = Sockets.getSocket()
-    var totalBytesToReceive: Long = 0L
-    var totalBytesReceived: Long = 0L
+    private  var totalBytesToReceive: Long = 0L
+    private var totalBytesReceived: Long = 0L
 
-    fun startReceive() {
+   fun startReceive() {
         Log.d(TAG, "startReceive: Attempting to receive files")
 
         CoroutineScope(Dispatchers.IO).launch {
@@ -65,7 +69,7 @@ class DataReceiverManger(private val context: Context) {
 
                 for (i in 0 until count) {
                     Log.d(TAG, "startReceive: Receiving file $i/$count")
-                    receiveFile(count)
+                    receiveFile()
                 }
 
 
@@ -73,14 +77,11 @@ class DataReceiverManger(private val context: Context) {
                 Log.e(TAG, "startReceive: Exception: ${e.localizedMessage}")
                 listener?.onConnectionError()
             }
-//            finally {
-//                Log.d(TAG, "startReceive: Finished")
-//            }
         }
     }
 
 
-    private fun receiveFile(count: Int) {
+    private fun receiveFile() {
         try {
             val socket = existingSocket
             var progress:Int = 0
@@ -182,153 +183,4 @@ class DataReceiverManger(private val context: Context) {
             listener?.onFileReceiveFailure("Exception: ${e.message}")
         }
     }
-
-
-
-    /*private fun receiveFile(count: Int) {
-           try {
-               val socket = existingSocket
-               if (socket == null || socket.isClosed) {
-                   Log.e(TAG, "receiveFile: Socket is closed or null")
-                   listener?.onConnectionError()
-                   return
-               }
-
-               val fileLength = dataInputStream?.readLong() ?: 0
-               val filePath = dataInputStream?.readUTF() ?: ""
-               val fileName = File(filePath).name
-               val folderName = "SmartSwitchSDK"
-               val folderPath = File(
-                   Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                   folderName
-               )
-
-               if (!folderPath.exists()) folderPath.mkdirs()
-
-               if (fileName.isNotEmpty() && fileLength > 0) {
-                   val receivedFile = File(folderPath, fileName)
-                   val fileOutputStream = BufferedOutputStream(FileOutputStream(receivedFile))
-
-                   val buffer = ByteArray(4096) // 4KB buffer
-                   var bytesRead: Int
-                   var totalBytesRead = 0L
-
-                   while (totalBytesRead < fileLength) {
-                       bytesRead = dataInputStream?.read(buffer) ?: -1
-                       if (bytesRead == -1) break
-
-                       fileOutputStream.write(buffer, 0, bytesRead)
-                       totalBytesRead += bytesRead
-
-                       val progress = ((totalBytesRead.toDouble() / fileLength.toDouble()) * 100).toInt()
-                       listener?.onFileReceiveProgress(progress)
-                       Log.d(TAG, "receiveFile: Progress: $progress% ($totalBytesRead/$fileLength)")
-                   }
-
-                   fileOutputStream.flush()
-                   fileOutputStream.close()
-
-                   if (totalBytesRead == fileLength) {
-                       listener?.onFileReceiveSuccess()
-                       filesReceived++
-
-                       if (filesReceived == count) {
-                           listener?.onAllFileReceiveSuccess()
-                           Sockets.getSocket()?.let {
-                               Log.d(TAG, "closeSocket: ${it.isConnected}")
-                               if (it.isConnected) {
-                                   it.close()
-                                   Log.d(TAG, "closeSocket: ${it.isClosed}")
-                               }
-                           }
-                       }
-                   } else {
-                       Log.e(TAG, "receiveFile: Incomplete file received")
-                       listener?.onFileReceiveFailure("Incomplete file received")
-                   }
-
-               } else {
-                   Log.e(TAG, "receiveFile: Invalid file name or length")
-                   listener?.onFileReceiveFailure("Invalid file name or length")
-               }
-           } catch (e: IOException) {
-               Log.e(TAG, "receiveFile: Exception: ${e.message}")
-               listener?.onFileReceiveFailure("IOException: ${e.message}")
-           }
-       }*/
-
-
-
-
-    // fiza code here
-  /*  private fun receiveFile(count: Int) {
-        try {
-            val socket = existingSocket
-            if (socket == null || socket.isClosed) {
-                Log.e(TAG, "receiveFile: Socket is closed or null")
-                listener?.onConnectionError()
-                return
-            }
-
-            val filePathLength = dataInputStream?.readLong() ?: 0
-            if (filePathLength <= 0) {
-                Log.e(TAG, "receiveFile: Invalid file path length")
-                return
-            }
-
-            val filePath = dataInputStream?.readUTF() ?: ""
-            val fileName = File(filePath).name
-            val folderName = "SmartSwitchSDK"
-            val folderPath = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                folderName
-            )
-
-            if (!folderPath.exists()) folderPath.mkdirs()
-
-            if (fileName.isNotEmpty()) {
-                val receivedFile = File(folderPath, fileName)
-                val fileOutputStream = FileOutputStream(receivedFile)
-                val objectInputStream = ObjectInputStream(socket.getInputStream())
-
-                val bytesRead = objectInputStream.readObject() as? ByteArray
-                if (bytesRead != null) {
-                    fileOutputStream.write(bytesRead)
-                    fileOutputStream.close()
-                    listener?.onFileReceiveSuccess()
-                    filesReceived++
-
-                    val progress = ((filesReceived.toDouble() / count.toDouble()) * 100).toInt()
-                    listener?.onFileReceiveProgress(progress)
-                    Log.d(TAG, "receiveFile: Progress: $progress% ($filesReceived/$count)")
-
-                    if (progress == 100) {
-                        listener?.onAllFileReceiveSuccess()
-                        Sockets.getSocket()?.let {
-                            Log.d(TAG, "closeSocket: ${it.isConnected}")
-                            if (it.isConnected)
-                            {
-                                it.close()
-                                Log.d(TAG, "closeSocket: ${it.isClosed}")
-
-                            }
-                        }
-                    }
-
-                } else {
-                    Log.e(TAG, "receiveFile: Failed to read file data")
-                    listener?.onFileReceiveFailure("File read error")
-                }
-            } else {
-                Log.e(TAG, "receiveFile: Invalid file name")
-                listener?.onFileReceiveFailure("Invalid file name")
-            }
-        } catch (e: IOException) {
-            Log.e(TAG, "receiveFile: Exception: ${e.message}")
-            listener?.onFileReceiveFailure("IOException: ${e.message}")
-        } catch (e: ClassNotFoundException) {
-            Log.e(TAG, "receiveFile: ClassNotFoundException: ${e.message}")
-            listener?.onFileReceiveFailure("ClassNotFoundException: ${e.message}")
-        }
-    }*/
 }

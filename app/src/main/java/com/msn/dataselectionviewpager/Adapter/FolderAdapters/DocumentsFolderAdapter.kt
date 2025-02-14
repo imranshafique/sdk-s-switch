@@ -11,8 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import com.msn.dataselectionviewpager.dataClass.DocumentModel
+ import com.msn.dataselectionviewpager.dataClass.DocumentModel
 import java.io.File
 import androidx.core.content.FileProvider
 
@@ -53,17 +52,14 @@ class DocumentsFolderAdapter(
         }
 
         // Ensure the checkbox reflects selection state
-        holder.checkBox.isChecked = folderUri?.let { SelectedItemsUriManager.getSelectedUris().contains(it) } ?: false
 
         // Handle checkbox click to add/remove URI from selected list
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (folderUri != null) {
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(folderUri)
-                    Log.d("DocumentsFolderAdapter", "URI Added: $folderUri")
+                     Log.d("DocumentsFolderAdapter", "URI Added: $folderUri")
                 } else {
-                    SelectedItemsUriManager.removeUri(folderUri)
-                    Log.d("DocumentsFolderAdapter", "URI Removed: $folderUri")
+                     Log.d("DocumentsFolderAdapter", "URI Removed: $folderUri")
                 }
             }
         }

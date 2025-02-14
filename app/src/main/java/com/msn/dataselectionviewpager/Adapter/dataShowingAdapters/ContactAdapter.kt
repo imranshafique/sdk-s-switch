@@ -13,8 +13,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.Fragments.ContactFragment
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import com.msn.dataselectionviewpager.dataClass.Contact
+ import com.msn.dataselectionviewpager.dataClass.Contact
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 import java.io.FileWriter
@@ -43,13 +42,12 @@ class ContactAdapter(private val context: Context, private val contacts: List<Co
                     file = convertContactsToVcf(context, it.contactUri)
                 }
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(contact.contactUri)
-                    selectedPath.add(file!!.path)
+                     selectedPath.add(file!!.path)
                     Log.d("Selected URIs", "Added URI: ${contact.contactUri}")
                     Log.d("Selected URIs", "Added URI selectedPath : ${selectedPath}")
 
                 } else {
-                    SelectedItemsUriManager.removeUri(contact.contactUri)
+                    selectedPath.remove(file!!.path)
                     Log.d("Selected URIs", "remove URI: ${contact.contactUri}")
 
                 }
@@ -110,7 +108,4 @@ class ContactAdapter(private val context: Context, private val contacts: List<Co
 
     override fun getItemCount(): Int = contacts.size
 
-    fun getSelectedContacts(): List<Contact> {
-        return contacts.filter { SelectedItemsUriManager.getSelectedUris().contains(it.contactUri) }
-    }
 }

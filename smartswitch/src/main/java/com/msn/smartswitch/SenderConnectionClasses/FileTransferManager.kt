@@ -2,16 +2,18 @@ package com.msn.smartswitch.SenderConnectionClasses
 
 import android.app.Activity
 import android.content.Context
-import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
-import com.ft.features.local_transfer.smart_switch.connection.Sockets
- import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.smartswitch.ServerClient.Sockets
+import com.msn.smartswitch.Models.AppConstant.selectedPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.*
+import java.io.BufferedInputStream
+import java.io.DataOutputStream
+import java.io.File
+import java.io.FileInputStream
+import java.io.IOException
 import java.net.Socket
-import javax.inject.Inject
 
 class FileTransferSDK(
     private val context: Context,
@@ -27,18 +29,13 @@ class FileTransferSDK(
         fun onFileSendingProgress(progress: Float)
     }
 
-    @Inject
-    lateinit var wifiP2pManager: WifiP2pManager
-
-    @Inject
-    lateinit var wifiP2pChannel: WifiP2pManager.Channel
 
      private var listener: FileTransferListener? = null
     private val TAG = javaClass.simpleName
-    var totalData: Int = 0
-    var transferredData:Int = 0
-    var totalBytesSent = 0L
-    var totalBytesToSend: Long = 0L  // Total bytes of all files
+    private var totalData: Int = 0
+    private var transferredData:Int = 0
+    private var totalBytesSent = 0L
+    private var totalBytesToSend: Long = 0L  // Total bytes of all files
 
     fun setListener(listener: FileTransferListener) {
         this.listener = listener
@@ -73,7 +70,7 @@ class FileTransferSDK(
             }
         }
     }
-    fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
+    private fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
         var totalSize = 0L
         for (path in filePaths) {
             val file = File(path)
@@ -86,7 +83,6 @@ class FileTransferSDK(
     private fun sendData(file: File, dataOutputStream: DataOutputStream, socket: Socket) {
         try {
             if (!socket.isClosed) {
-//                Log.d(TAG, "sendData: Sending file: ${file.name}")
 
                 dataOutputStream.writeLong(file.length())
                 dataOutputStream.writeUTF(file.path)
@@ -132,56 +128,4 @@ class FileTransferSDK(
             listener?.onFileSendFailure("OutOfMemoryError: ${e.message}")
         }
     }
-
-
-    /*   private fun sendData(file: File, dataOutputStream: DataOutputStream, socket: Socket) {
-        try {
-            if (!socket.isClosed) {
-                Log.d(TAG, "sendData: Sending file: ${file.name}")
-
-                dataOutputStream.writeLong(file.length())
-                dataOutputStream.writeUTF(file.path)
-                dataOutputStream.flush()
-
-                val objectOutputStream = ObjectOutputStream(socket.getOutputStream())
-                val bytes = ByteArray(file.length().toInt())
-
-                BufferedInputStream(FileInputStream(file)).use { bis ->
-                    bis.read(bytes, 0, bytes.size)
-                }
-
-                objectOutputStream.writeObject(bytes)
-                objectOutputStream.flush()
-                transferredData++
-                val progress = (transferredData.toFloat() / totalData.toFloat() * 100).toInt()
-                listener?.onFileSendSuccess(progress)
-
-                if (progress == 100) {
-                    Sockets.getSocket()?.let {
-                        Log.d(TAG, "closeSocket: ${it.isConnected}")
-                        if (it.isConnected)
-                        {
-                            it.close()
-                            Log.d(TAG, "closeSocket: ${it.isClosed}")
-
-                        }
-                    }
-                    listener?.onAllFilesSentSuccessfully()
-                }
-
-
-                Log.d(TAG, "sendData: Successfully sent ${file.name}")
-
-            } else {
-                Log.e(TAG, "sendData: Socket closed before sending file")
-                listener?.onConnectionError()
-            }
-        } catch (e: IOException) {
-            Log.e(TAG, "sendData: IOException: ${e.message}")
-            listener?.onFileSendFailure("IOException: ${e.message}")
-        } catch (e: OutOfMemoryError) {
-            Log.e(TAG, "sendData: OutOfMemoryError: ${e.message}")
-            listener?.onFileSendFailure("OutOfMemoryError: ${e.message}")
-        }
-    }*/
 }

@@ -1,4 +1,4 @@
-package com.ft.features.local_transfer.smart_switch.connection
+package com.msn.smartswitch.ServerClient
 
 import java.net.Socket
 

@@ -1,21 +1,16 @@
 package com.msn.smartswitch.SenderConnectionClasses
 
 
-import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
-import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
-import com.ft.features.local_transfer.smart_switch.connection.ClientClass
-import com.ft.features.local_transfer.smart_switch.connection.ServerClass
+import com.msn.smartswitch.ServerClient.ClientClass
+import com.msn.smartswitch.ServerClient.ServerClass
 import com.msn.smartswitch.Models.AppConstant.serverAddress
-import com.msn.smartswitch.Models.Utilities
 import com.msn.smartswitch.ServerClient.ConnectionCallBack
 
 class P2PConnectionManager(private val context: Context) {
@@ -124,8 +119,7 @@ class P2PConnectionManager(private val context: Context) {
                         Log.d(TAG, "onSuccess: wifiDisConnected")
                         startDiscovery()
                     }
-                    override fun onFailure(reason: Int) {
-                    }
+                    override fun onFailure(reason: Int) = Unit
                 })
             }
         }
@@ -143,38 +137,6 @@ class P2PConnectionManager(private val context: Context) {
                 listener?.onError("Discovery failed: $reason")
             }
         })
-    }
-
-    fun requestConnectionInfo() {
-        wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { connInfo ->
-            if (connInfo.groupOwnerAddress != null) {
-                listener?.onManualConnectionSuccess()
-            } else {
-                listener?.onError("No Connection Found")
-            }
-        }
-    }
-
-    fun connectToDevice(device: WifiP2pDevice) {
-        val config = WifiP2pConfig().apply {
-            deviceAddress = device.deviceAddress
-        }
-
-        wifiP2pManager.connect(
-            wifiP2pChannel,
-            config,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    Log.d("ConnectionStatus", "Connection initiated to device: ${device.deviceName}")
-                    listener?.onManualConnectionSuccess()
-                }
-
-                override fun onFailure(reason: Int) {
-                    Log.e("ConnectionStatus", "Connection failed with reason: $reason")
-                    listener?.onError("Connection failed: $reason")
-                }
-            }
-        )
     }
 }
 

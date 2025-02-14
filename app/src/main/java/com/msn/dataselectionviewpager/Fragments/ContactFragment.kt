@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.msn.dataselectionviewpager.Adapter.dataShowingAdapters.ContactAdapter
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.SelectedURis.ConstantVariables
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
 import com.msn.dataselectionviewpager.dataClass.Contact
 import com.msn.dataselectionviewpager.databinding.FragmentContactBinding
 
@@ -69,12 +68,6 @@ class ContactFragment : Fragment() {
             }
 
         }
-
-        // Set up button click listener with binding reference
-        binding.btnExportVcf.setOnClickListener {
-            exportSelectedContacts()
-        }
-
         return binding.root
     }
 
@@ -144,17 +137,4 @@ class ContactFragment : Fragment() {
         contactAdapter.notifyDataSetChanged()
     }
 
-    private fun exportSelectedContacts() {
-        val selectedContacts = contactAdapter.getSelectedContacts()
-        if (selectedContacts.isEmpty()) {
-            Toast.makeText(requireContext(), "No contacts selected", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        selectedContacts.forEach { contact ->
-            SelectedItemsUriManager.addUri(contact.contactUri)
-        }
-
-        Toast.makeText(requireContext(), "Contacts saved!", Toast.LENGTH_SHORT).show()
-    }
 }

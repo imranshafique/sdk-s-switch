@@ -11,7 +11,6 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
 
 import androidx.core.content.FileProvider
 import com.msn.dataselectionviewpager.dataClass.AudioModel

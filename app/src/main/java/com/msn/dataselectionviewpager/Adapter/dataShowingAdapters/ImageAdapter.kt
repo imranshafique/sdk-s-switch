@@ -15,8 +15,7 @@ import com.msn.dataselectionviewpager.R
 
 
 import androidx.core.content.FileProvider
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import com.msn.smartswitch.Models.AppConstant.selectedPath
+ import com.msn.smartswitch.Models.AppConstant.selectedPath
 
 
 class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
@@ -47,12 +46,12 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAda
             // Handle checkbox click to add/remove URI from selected list
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(contentUri)
-                    selectedPath.add(uri.path!!)
+                     selectedPath.add(uri.path!!)
                     Log.d("Selected URIs", "Added URI: $contentUri")
                     Log.d("Selected path", "Added selectedPath: $selectedPath")
                 } else {
-                    SelectedItemsUriManager.removeUri(contentUri)
+                    selectedPath.remove(uri.path)
+
                     Log.d("Selected URIs", "Removed URI: $contentUri")
                 }
             }

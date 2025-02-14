@@ -9,14 +9,11 @@ import android.widget.CheckBox
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
 
 
 import android.content.Context
 import android.widget.ImageView
 import com.msn.dataselectionviewpager.dataClass.AppInfo
-import com.msn.smartswitch.Models.AppConstant.listOfSelectedItemsFileNames
-import com.msn.smartswitch.Models.AppConstant.listOfSelectedItemsFilesLength
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 
@@ -48,8 +45,6 @@ class AppsAdapter(
             checkBox.isChecked = selectedPath.contains(appPath)
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(appUri)
-                    Log.d("Selected URIs", "Added URI: $appUri")
 
                     // Get the file size
                     val appFile = File(appInfo.appPath ?: "")
@@ -65,15 +60,12 @@ class AppsAdapter(
                     Log.d("AppsAdapter", "App File Name (APK): $appFileName")
                     Log.d("AppsAdapter", "App File Size: $fileSize bytes")
 
-                    // Add the file name (with original name) to the respective lists
-                    listOfSelectedItemsFilesLength.add(fileSize)
-                    listOfSelectedItemsFileNames.add(appName) // Store human-readable name if needed
                     if (appPath != null) {
                         selectedPath.add(appPath)
                     }
                 } else {
-                    SelectedItemsUriManager.removeUri(appUri)
-                    Log.d("Selected URIs", "Removed URI: $appUri")
+                    selectedPath.remove(appPath)
+                     Log.d("Selected URIs", "Removed URI: $appUri")
                 }
             }
         }

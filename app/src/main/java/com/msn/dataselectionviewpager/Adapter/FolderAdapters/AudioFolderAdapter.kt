@@ -11,8 +11,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import com.msn.dataselectionviewpager.dataClass.FolderWithAudioCount
+ import com.msn.dataselectionviewpager.dataClass.FolderWithAudioCount
 import java.io.File
 import androidx.core.content.FileProvider
 
@@ -36,15 +35,14 @@ class AudioFolderAdapter(private val context: Context, private val onItemClick: 
             val paths = folderWithAudioCount.folder.path
             Log.d("AudioPaths", "bind: path:$paths")
             // Set checkbox state based on whether the folder URI is in the selected list
-            checkBox.isChecked = SelectedItemsUriManager.getSelectedUris().contains(folderUri)
 
             // Handle checkbox click to add/remove URI from selected list
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(folderUri)
+
                     Log.d("Selected URIs", "Added URI: $folderUri")
                 } else {
-                    SelectedItemsUriManager.removeUri(folderUri)
+
                     Log.d("Selected URIs", "Removed URI: $folderUri")
                 }
             }

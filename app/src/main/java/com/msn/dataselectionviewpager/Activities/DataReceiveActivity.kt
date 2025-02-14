@@ -20,7 +20,7 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         super.onCreate(savedInstanceState)
         binding= ActivityReceiverBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        dataReceiverManager = DataReceiverManger(this@DataReceiveActivity)
+        dataReceiverManager = DataReceiverManger()
         dataReceiverManager.setListener(this)
         dataReceiverManager.startReceive()
         binding.btnDisconnect.setOnClickListener {

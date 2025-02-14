@@ -14,10 +14,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import androidx.core.content.FileProvider
-import com.msn.smartswitch.Models.AppConstant.listOfSelectedItemsFileNames
-import com.msn.smartswitch.Models.AppConstant.listOfSelectedItemsFilesLength
+ import androidx.core.content.FileProvider
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 
@@ -27,28 +24,6 @@ class VideoAdapter(private val context: Context) : RecyclerView.Adapter<VideoAda
 
     private var uris = listOf<Uri>()
     private var TAG = javaClass.simpleName
-    // Select all videos
-    fun selectAll() {
-        uris.forEach { uri ->
-            val contentUri = convertFileUriToContentUri(uri)
-            if (!SelectedItemsUriManager.getSelectedUris().contains(contentUri)) {
-                SelectedItemsUriManager.addUri(contentUri)
-                val fileSize = getFileSize(contentUri)
-                listOfSelectedItemsFilesLength.add(fileSize)
-                listOfSelectedItemsFileNames.add(contentUri.toString())
-                Log.d("VideoAdapter", "Added URI for Select All: $contentUri, File Size: $fileSize")
-            }
-        }
-        notifyDataSetChanged()
-    }
-
-    // Deselect all videos
-    fun deselectAll() {
-        SelectedItemsUriManager.clearSelectedUris()
-        listOfSelectedItemsFilesLength.clear() // Clear file size list
-        notifyDataSetChanged()
-        Log.d("VideoAdapter", "All items deselected")
-    }
 
     inner class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val videoThumbnail: ImageView = itemView.findViewById(R.id.imageView)
@@ -72,17 +47,13 @@ class VideoAdapter(private val context: Context) : RecyclerView.Adapter<VideoAda
             // Handle checkbox click
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                    SelectedItemsUriManager.addUri(contentUri)
-                    if (!listOfSelectedItemsFilesLength.contains(fileSize)) {
-                        listOfSelectedItemsFilesLength.add(fileSize)
-                        listOfSelectedItemsFileNames.add(contentUri.toString())
+                    if (!selectedPath.contains(uri.path)) {
                         selectedPath.add(uri.path!!)
                         Log.d(TAG, "bind: selectedPath: $selectedPath ")
                     }
                     Log.d(TAG, "Added: $contentUri, File Size: $fileSize")
                 } else {
-                    SelectedItemsUriManager.removeUri(contentUri)
-                    listOfSelectedItemsFilesLength.remove(fileSize)
+                    selectedPath.remove(uri.path)
                     Log.d(TAG, "Removed: $contentUri")
                 }
             }

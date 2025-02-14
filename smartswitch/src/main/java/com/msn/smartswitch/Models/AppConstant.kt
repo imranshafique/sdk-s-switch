@@ -9,8 +9,6 @@ object AppConstant {
 
     @JvmStatic
     var serverAddress: InetAddress? = null
-      var listOfSelectedItemsFilesLength: ArrayList<Long> = ArrayList()
-    var listOfSelectedItemsFileNames: ArrayList<String> = ArrayList()
     var selectedPath: ArrayList<String> = ArrayList()
 
 }

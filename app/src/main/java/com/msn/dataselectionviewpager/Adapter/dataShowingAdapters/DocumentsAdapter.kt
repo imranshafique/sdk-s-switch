@@ -12,8 +12,7 @@ import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.AppPrefs.SelectedItemsUriManager
-import com.msn.dataselectionviewpager.dataClass.DocumentModel
+ import com.msn.dataselectionviewpager.dataClass.DocumentModel
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 

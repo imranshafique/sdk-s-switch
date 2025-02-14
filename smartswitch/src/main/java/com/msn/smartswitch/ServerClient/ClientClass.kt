@@ -1,8 +1,7 @@
-package com.ft.features.local_transfer.smart_switch.connection
+package com.msn.smartswitch.ServerClient
 
 import android.util.Log
 import com.msn.smartswitch.Models.Utilities.Companion.PORT
-import com.msn.smartswitch.ServerClient.ConnectionCallBack
 import java.net.InetAddress
 import java.net.InetSocketAddress
 import java.net.Socket
