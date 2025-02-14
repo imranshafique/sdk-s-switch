@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:clickable="true">
+
+    <!-- Folder Icon -->
+    <de.hdodenhof.circleimageview.CircleImageView
+        app:civ_border_width="@dimen/_1sdp"
+        android:id="@+id/folderIcon"
+        android:layout_width="@dimen/_45sdp"
+        android:layout_height="@dimen/_45sdp"
+        android:layout_marginEnd="@dimen/_5sdp"
+        android:scaleType="centerCrop"
+        app:strokeColor="@android:color/darker_gray"
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
+        android:src="@drawable/ic_launcher_background"
+        android:clipToOutline="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <!-- Folder Name -->
+    <TextView
+        android:id="@+id/folderName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="Folder Name"
+        android:textSize="@dimen/_12ssp"
+        android:layout_marginStart="@dimen/_5sdp"
+        android:textColor="?android:textColorPrimary"
+        app:layout_constraintStart_toEndOf="@+id/folderIcon"
+        app:layout_constraintTop_toTopOf="@+id/folderIcon"
+        app:layout_constraintBottom_toBottomOf="@+id/folderIcon"/>
+
+    <CheckBox
+        android:id="@+id/folderCheckBox"
+        android:layout_width="@dimen/_20sdp"
+        android:layout_height="@dimen/_20sdp"
+        android:button="@null"
+        android:visibility="invisible"
+        android:background="@drawable/circular_checkbox"
+        app:layout_constraintTop_toTopOf="@+id/folderName"
+        app:layout_constraintBottom_toBottomOf="@+id/folderName"
+         app:layout_constraintEnd_toEndOf="parent"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

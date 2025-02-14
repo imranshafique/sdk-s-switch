@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">DataSelectionViewpager</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="storage_permission">Storage Permission</string>
+    <string name="external_storage_permisison_new">Your privacy is our priority. This\npermission required for sending and\nreceiving files only. We dont share\nyour data with anyone and its\nnever stored anywhere.</string>
+    <string name="grantpermisison">Grant Permission</string>
+    <string name="contact_permission">Contacts Permission</string>
+    <string name="trasnfer">Send data</string>
+    <string name="successFile">Files Transferred Successfully</string>
+    <string name="success">Success</string>
+    <string name="data_sending">Sending Data</string>
+    <string name="data">Data</string>
+    <string name="please_wait_for_a_while">Please wait while sending data</string>
+    <string name="please_wait_for_a_while_receiving">Please wait while receiving data</string>
+    <string name="totalFiles">Total Files:</string>
+    <string name="totalFilesSize">Total Size:</string>
+    <string name="remaining_time">Remaining Time:</string>
+    <string name="cancel">Cancel</string>
+    <string name="completed">Completed</string>
+    <string name="back_to_home">Back to Home</string>
+    <string name="receiver">Receiver</string>
+    <string name="dataprocessing">Data processing</string>
+    <string name="searching_devices">Searching Device</string>
+    <string name="receivedata">Receiver</string>
+    <string name="device_name">name</string>
+    <string name="connect">Connect</string>
+    <string name="done">Done</string>
+</resources>

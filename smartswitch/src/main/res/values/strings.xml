@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="receiver_not_ready">Receiver not ready!</string>
+    <string name="error_dialouge_text">Make sure you have started receiving from receiver device</string>
+    <string name="ok">Ok</string>
+    <string name="successFile">Files Transfered Successfully</string>
+    <string name="success">Success</string>
+    <string name="file_sending_failed">File Sending Failed</string>
+    <string name="connectionError">Connection Error</string>
+</resources>
