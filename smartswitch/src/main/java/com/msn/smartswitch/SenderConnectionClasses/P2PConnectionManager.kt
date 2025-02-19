@@ -5,9 +5,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.wifi.WpsInfo
+import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.util.Log
+import android.widget.Toast
 import com.msn.smartswitch.ServerClient.ClientClass
 import com.msn.smartswitch.ServerClient.ServerClass
 import com.msn.smartswitch.Models.AppConstant.serverAddress
@@ -137,6 +140,39 @@ class P2PConnectionManager(private val context: Context) {
                 listener?.onError("Discovery failed: $reason")
             }
         })
+    }
+
+    fun connectToPeer(deviceAddress: String) {
+        Log.d("mavi", "connectToPeer called" )
+
+        val config = WifiP2pConfig().apply {
+            this.deviceAddress = deviceAddress
+            wps.setup = WpsInfo.PBC
+        }
+
+        wifiP2pManager.connect(
+            wifiP2pChannel,
+            config,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    Log.d(TAG, "Connection successful to device: ${deviceAddress}")
+                }
+
+                override fun onFailure(reason: Int) {
+                    Log.e(TAG, "Connection failed with reason: $reason")
+                    val errorMessage = when (reason) {
+                        WifiP2pManager.BUSY -> "Wi-Fi Direct is busy, try again later."
+                        WifiP2pManager.ERROR -> "An internal error occurred."
+                        WifiP2pManager.P2P_UNSUPPORTED -> "Wi-Fi Direct is not supported on this device."
+                        WifiP2pManager.NO_SERVICE_REQUESTS -> "No service requests found."
+                        else -> "Unknown error code: $reason"
+                    }
+                    Log.e("mavi", "Connection failed: $errorMessage")
+                    listener?.onError(errorMessage)
+                }
+            }
+        )
+
     }
 }
 

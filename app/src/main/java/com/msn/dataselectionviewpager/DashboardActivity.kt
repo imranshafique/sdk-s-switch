@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.msn.dataselectionviewpager.Activities.QrCodeGeneratorActivity
+import com.msn.dataselectionviewpager.Activities.QrCodeScannerActivity
 import com.msn.dataselectionviewpager.Utils.AppUtils
 import com.msn.dataselectionviewpager.Activities.WifiReceiverActivity
 import com.msn.dataselectionviewpager.databinding.ActivityDashboardBinding
@@ -37,7 +39,7 @@ class DashboardActivity : AppCompatActivity() {
         binding.run {
             sendData.setOnClickListener {
                 if (AppUtils.hasPermission(this@DashboardActivity)){
-                    startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
+                    startActivity(Intent(this@DashboardActivity, QrCodeScannerActivity::class.java))
                 }else{
                     Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()
 
@@ -45,7 +47,9 @@ class DashboardActivity : AppCompatActivity() {
             }
             receiveData.setOnClickListener {
                 if(arePermissionsGranted(sender_permissions)&& isLocationEnabled()){
-                    startActivity(Intent(this@DashboardActivity, WifiReceiverActivity::class.java))
+//                    startActivity(Intent(this@DashboardActivity, WifiReceiverActivity::class.java))
+                    startActivity(Intent(this@DashboardActivity, QrCodeGeneratorActivity::class.java))
+
                 }else{
                     Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()
                 }

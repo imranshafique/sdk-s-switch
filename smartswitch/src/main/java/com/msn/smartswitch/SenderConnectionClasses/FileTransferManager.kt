@@ -40,7 +40,6 @@ class FileTransferSDK(
     fun setListener(listener: FileTransferListener) {
         this.listener = listener
     }
-
     fun sendFiles() {
         CoroutineScope(Dispatchers.IO).launch {
             val socket = Sockets.getSocket()
@@ -52,9 +51,7 @@ class FileTransferSDK(
             Log.d(TAG, "sendFiles: socket: $socket")
             totalBytesToSend = getTotalSizeInBytes(selectedPath)
             Log.d(TAG, "sendFiles: totalSize: $totalBytesToSend")
-
             val dataOutputStream = DataOutputStream(socket.getOutputStream())
-
             Log.d(TAG, "sendFiles: Sending file count: ${selectedPath.size}")
             Log.d(TAG, "sendFiles: Sending file count: ${selectedPath}")
             totalData = selectedPath.size
@@ -64,7 +61,6 @@ class FileTransferSDK(
             Log.d(TAG, "")
 
             for (path in selectedPath) {
-
                 Log.d(TAG, "sendFiles: Sending file: $path")
                 sendData(File(path), dataOutputStream, socket)
             }
