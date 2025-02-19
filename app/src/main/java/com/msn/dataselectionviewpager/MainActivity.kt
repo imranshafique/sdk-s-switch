@@ -36,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.ACCESS_FINE_LOCATION
 
         )
+
     }
     private lateinit var locationManager: LocationManager
 
