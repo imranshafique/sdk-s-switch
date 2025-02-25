@@ -47,7 +47,13 @@ class ContactAdapter(private val context: Context, private val contacts: List<Co
                     Log.d("Selected URIs", "Added URI selectedPath : ${selectedPath}")
 
                 } else {
-                    selectedPath.remove(file!!.path)
+                    if (file?.let { selectedPath.contains(it.path) } == true) {
+                        selectedPath.remove(file?.path)
+                        if (file?.exists()!!) {
+                            val deleted = file?.delete()
+                            Log.d("Selected URIs", "Removed URI: ${contact.contactUri}, File deleted: $deleted")
+                        }
+                    }
                     Log.d("Selected URIs", "remove URI: ${contact.contactUri}")
 
                 }

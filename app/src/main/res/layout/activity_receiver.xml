@@ -12,6 +12,7 @@
         android:layout_height="@dimen/_145sdp"
         android:layout_marginTop="20dp"
         android:max="100"
+        android:keepScreenOn="true"
         android:progress="0"
         app:indicatorInset="8dp"
         app:indicatorSize="@dimen/_145sdp"

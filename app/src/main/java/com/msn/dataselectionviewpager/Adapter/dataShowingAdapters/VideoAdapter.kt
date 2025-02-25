@@ -15,6 +15,8 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
  import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 
@@ -38,7 +40,11 @@ class VideoAdapter(private val context: Context) : RecyclerView.Adapter<VideoAda
             } else {
                 uri
             }
-
+            Glide.with(context)
+                .load(contentUri)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(videoThumbnail)
             val fileSize = getFileSize(contentUri)
 
             // Set checkbox state

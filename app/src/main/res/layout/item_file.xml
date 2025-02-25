@@ -43,7 +43,6 @@
         android:layout_width="@dimen/_20sdp"
         android:layout_height="@dimen/_20sdp"
         android:button="@null"
-        android:visibility="invisible"
         android:background="@drawable/circular_checkbox"
         app:layout_constraintTop_toTopOf="@+id/folderName"
         app:layout_constraintBottom_toBottomOf="@+id/folderName"
