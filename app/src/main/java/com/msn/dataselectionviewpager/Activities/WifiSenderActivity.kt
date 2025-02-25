@@ -21,28 +21,25 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.msn.dataselectionviewpager.Adapter.DeviceListAdapter
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.Utils.AppUtils
- import com.msn.smartswitch.SenderConnectionClasses.P2PConnectionListener
+import com.msn.dataselectionviewpager.databinding.ActivityWaitingSenderScreenBinding
+import com.msn.dataselectionviewpager.databinding.ActivityWifiDirectConnectionBinding
+import com.msn.smartswitch.SenderConnectionClasses.P2PConnectionListener
 import com.msn.smartswitch.SenderConnectionClasses.P2PConnectionManager
 
 
 class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
-     private lateinit var p2pConnectionManager: P2PConnectionManager
+    lateinit var binding:ActivityWaitingSenderScreenBinding
+      private lateinit var p2pConnectionManager: P2PConnectionManager
     private val TAG = javaClass.simpleName
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var refresh: FloatingActionButton
-    private lateinit var progressBar: ProgressBar
-    private val deviceListAdapter = DeviceListAdapter { device ->
+     private val deviceListAdapter = DeviceListAdapter { device ->
         // On device click, initiate connection
         connectToDevice(device)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_waiting_sender_screen)
-        recyclerView = findViewById(R.id.deviceListRecyclerView)
-        refresh = findViewById(R.id.refresh)
-        progressBar = findViewById(R.id.progressBar)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        recyclerView.adapter = deviceListAdapter
+           binding.deviceListRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.deviceListRecyclerView.adapter = deviceListAdapter
         p2pConnectionManager = P2PConnectionManager(this)
         p2pConnectionManager.setListener(this)
         p2pConnectionManager.registerReceiver()
@@ -53,9 +50,9 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
             Toast.makeText(this@WifiSenderActivity,"SomeThing went Wrong check internet and gps",Toast.LENGTH_SHORT).show()
             finish()
         }
-        refresh.setOnClickListener {
+        binding.refresh.setOnClickListener {
             if (AppUtils.isInternetAvailable(this) ) {
-                recyclerView.visibility = View.GONE
+                binding.deviceListRecyclerView.visibility = View.GONE
                 p2pConnectionManager.disconnectWifiDirectIfConnected()
                 p2pConnectionManager.startDiscovery()
             }else{
@@ -91,7 +88,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onPeersAvailable(peers: List<WifiP2pDevice>) {
         Log.d(TAG, "Available Peers: $peers")
-        progressBar.visibility = View.GONE
+        binding.progressBar.visibility = View.GONE
         deviceListAdapter.updateDeviceList(peers)
     }
 
