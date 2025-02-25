@@ -52,7 +52,9 @@ class ImagesFragment : Fragment(R.layout.fragment_images) {
         }
 
         viewModel.imageFolders.observe(viewLifecycleOwner) { folderWithImageCounts ->
-            imagesFolderAdapter.submitList(folderWithImageCounts)
+            if (folderWithImageCounts != null) {
+                imagesFolderAdapter.submitList(folderWithImageCounts)
+            }
         }
 
         viewModel.loadImageFolders(requireContext())

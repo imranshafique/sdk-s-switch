@@ -44,15 +44,6 @@ class AudioAdapter(private val context: Context) : RecyclerView.Adapter<AudioAda
             }
         }
 
-        // Helper function to convert file URI to content URI using FileProvider
-        private fun convertFileUriToContentUri(fileUri: Uri): Uri {
-            val file = File(fileUri.path ?: "")
-            return FileProvider.getUriForFile(
-                context,
-                "com.msn.dataselectionviewpager.fileprovider", // Replace with your own provider authorities
-                file
-            )
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AudioViewHolder {

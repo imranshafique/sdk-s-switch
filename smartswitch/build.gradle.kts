@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    id("maven-publish")
 }
 
 android {
@@ -35,6 +36,19 @@ android {
 
     kotlinOptions {
         jvmTarget = "17"
+    }
+}
+// Publishing configuration
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("release") {
+                from(components["release"])
+                groupId = "com.github.imranshafique" // Your GitHub username
+                artifactId = "cybronsmartswitchsdk"
+                version = "1.0"
+            }
+        }
     }
 }
 

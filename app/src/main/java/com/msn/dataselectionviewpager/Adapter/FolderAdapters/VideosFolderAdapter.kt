@@ -14,9 +14,13 @@ import com.msn.dataselectionviewpager.R
  import com.msn.dataselectionviewpager.dataClass.FolderWithVideoCount
 import java.io.File
 import androidx.core.content.FileProvider
+import com.bumptech.glide.Glide
+import com.msn.smartswitch.Models.AppConstant.selectedPath
 
-class VideosFolderAdapter(private val context: Context, private val onItemClick: (FolderWithVideoCount) -> Unit) :
-    RecyclerView.Adapter<VideosFolderAdapter.FolderViewHolder>() {
+class VideosFolderAdapter(
+    private val context: Context,
+    private val onItemClick: (FolderWithVideoCount) -> Unit
+) : RecyclerView.Adapter<VideosFolderAdapter.FolderViewHolder>() {
 
     private var folders = listOf<FolderWithVideoCount>()
 
@@ -26,27 +30,33 @@ class VideosFolderAdapter(private val context: Context, private val onItemClick:
         val checkBox: CheckBox = itemView.findViewById(R.id.folderCheckBox)
 
         fun bind(folderWithVideoCount: FolderWithVideoCount) {
-            folderNameTextView.text = folderWithVideoCount.folder.name + " (${folderWithVideoCount.videoCount})"
+            folderNameTextView.text = "${folderWithVideoCount.folder.name} (${folderWithVideoCount.videoCount})"
 
-            // Set the thumbnail or a default image
             if (folderWithVideoCount.thumbnail != null) {
-                folderThumbnailImageView.setImageBitmap(folderWithVideoCount.thumbnail)
+                Glide.with(context)
+                    .load(folderWithVideoCount.thumbnail)
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .into(folderThumbnailImageView)
             } else {
-                folderThumbnailImageView.setImageResource(R.drawable.ic_launcher_background) // Default image
+                folderThumbnailImageView.setImageResource(R.drawable.ic_launcher_background)
             }
 
-            // Convert File to Uri
-            val folderUri = convertFileToUri(folderWithVideoCount.folder)
+            val folderPath = folderWithVideoCount.folder.path
+            Log.d("paths", "bind: folderPath: $folderPath")
 
-            // Set checkbox state based on whether the folder URI is in the selected list
+            // Get all video paths in the folder
+            val allPaths = getAllFilePaths(folderWithVideoCount.folder)
+            checkBox.isChecked = allPaths.all { selectedPath.contains(it) }
 
-            // Handle checkbox click to add/remove URI from selected list
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                     Log.d("Selected URIs", "Added URI: $folderUri")
+                    selectedPath.addAll(allPaths)
+                    Log.d("Selected URIs", "Added Paths: $allPaths")
                 } else {
-                     Log.d("Selected URIs", "Removed URI: $folderUri")
+                    selectedPath.removeAll(allPaths)
+                    Log.d("Selected URIs", "Removed Paths: $allPaths")
                 }
+                Log.d("Selected Path List", "Current selectedPath: $selectedPath")
             }
 
             itemView.setOnClickListener {
@@ -54,13 +64,10 @@ class VideosFolderAdapter(private val context: Context, private val onItemClick:
             }
         }
 
-        // Helper function to convert File to Uri using FileProvider
-        private fun convertFileToUri(file: File): Uri {
-            return FileProvider.getUriForFile(
-                context,
-                "com.msn.dataselectionviewpager.fileprovider", // Replace with your actual file provider authorities
-                file
-            )
+        // Helper function to get all video file paths in the folder
+        private fun getAllFilePaths(folder: File): List<String> {
+            val files = folder.listFiles()
+            return files?.filter { it.isFile }?.map { it.absolutePath } ?: emptyList()
         }
     }
 

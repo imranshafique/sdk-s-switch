@@ -1,7 +1,7 @@
 package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters
 
+
 import android.content.Context
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,13 +9,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
-import androidx.recyclerview.widget.RecyclerView
-import com.msn.dataselectionviewpager.R
- import java.io.File
-
-
 import androidx.core.content.FileProvider
- import com.msn.smartswitch.Models.AppConstant.selectedPath
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.msn.dataselectionviewpager.R
+import com.msn.smartswitch.Models.AppConstant.selectedPath
+import java.io.File
 
 
 class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
@@ -35,10 +34,12 @@ class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAda
                 uri // Already a content:// URI
             }
 
-            // Decode and display the image from contentUri
-            val inputStream = itemView.context.contentResolver.openInputStream(contentUri)
-            val bitmap = BitmapFactory.decodeStream(inputStream)
-            imageView.setImageBitmap(bitmap)
+            // Use Glide for faster image loading
+            Glide.with(context)
+                .load(contentUri)
+                .placeholder(R.drawable.ic_launcher_background)
+                .centerCrop()
+                .into(imageView)
 
             // Set checkbox state based on whether the URI is in the selected list
             checkBox.isChecked = selectedPath.contains(uri.path)

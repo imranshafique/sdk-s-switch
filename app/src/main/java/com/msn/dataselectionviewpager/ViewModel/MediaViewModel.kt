@@ -25,30 +25,10 @@ class MediaViewModel : ViewModel() {
 
     private val _imageFolders = MutableLiveData<List<FolderWithImageCount>>()
     val imageFolders: LiveData<List<FolderWithImageCount>> = _imageFolders
-
-    private val _categorizedDocuments = MutableLiveData<Map<String, List<DocumentModel>>>()
-    val categorizedDocuments: LiveData<Map<String, List<DocumentModel>>> get() = _categorizedDocuments
-
-    private val _videoFolders = MutableLiveData<List<FolderWithVideoCount>>()
-    val videoFolders: LiveData<List<FolderWithVideoCount>> get() = _videoFolders
-
-    private val _videosInFolder = MutableLiveData<List<File>>()
-    val videosInFolder: LiveData<List<File>> get() = _videosInFolder
-
-    private val _audioFolders = MutableLiveData<List<FolderWithAudioCount>>()
-    val audioFolders: LiveData<List<FolderWithAudioCount>> get() = _audioFolders
-
-    private val _audiosInFolder = MutableLiveData<List<AudioModel>>()
-    val audiosInFolder: LiveData<List<AudioModel>> get() = _audiosInFolder
-
-    private val _documentFolders = MutableLiveData<List<File>>()
-    val documentFolders: LiveData<List<File>> get() = _documentFolders
-
     // Load image folders in the background
     fun loadImageFolders(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val imageDirs = getMediaDirectories(context)
-            val folderWithImageCountList = mutableListOf<FolderWithImageCount>()
 
             for (folder in imageDirs) {
                 val images = folder.listFiles { file -> file.isFile && file.extension in listOf("jpg", "jpeg", "png", "gif") }
@@ -59,21 +39,33 @@ class MediaViewModel : ViewModel() {
                     null
                 }
 
-                folderWithImageCountList.add(FolderWithImageCount(folder, imageCount, thumbnail))
-            }
+                val folderWithImageCount = FolderWithImageCount(folder, imageCount, thumbnail)
 
-            // Post result to LiveData on main thread
-            withContext(Dispatchers.Main) {
-                _imageFolders.value = folderWithImageCountList
+                // Post each folder update to LiveData immediately
+                withContext(Dispatchers.Main) {
+                    _imageFolders.value = (_imageFolders.value ?: emptyList()) + folderWithImageCount
+                }
             }
         }
     }
+
+
+
+
+    private val _categorizedDocuments = MutableLiveData<Map<String, List<DocumentModel>>>()
+    val categorizedDocuments: LiveData<Map<String, List<DocumentModel>>> get() = _categorizedDocuments
+
+    private val _videoFolders = MutableLiveData<List<FolderWithVideoCount>>()
+    val videoFolders: LiveData<List<FolderWithVideoCount>> get() = _videoFolders
+
+
 
     // Load video folders in the background
     fun loadVideoFolders(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val videoDirs = getVideoDirectories(context)
-            val folderWithVideoCountList = mutableListOf<FolderWithVideoCount>()
+
+            val newFolderList = mutableListOf<FolderWithVideoCount>()
 
             for (folder in videoDirs) {
                 Log.d("VideoFolders", "Folder Path: ${folder.absolutePath}")
@@ -88,22 +80,12 @@ class MediaViewModel : ViewModel() {
                     null
                 }
 
-                folderWithVideoCountList.add(FolderWithVideoCount(folder, videoCount, thumbnail))
-            }
+                newFolderList.add(FolderWithVideoCount(folder, videoCount, thumbnail))
 
-            withContext(Dispatchers.Main) {
-                _videoFolders.value = folderWithVideoCountList
-            }
-        }
-    }
-
-
-    // Load videos from a specific folder in the background
-    fun loadVideosFromFolder(folder: File) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val videos = folder.listFiles { file -> file.isFile && file.extension in listOf("mp4", "mkv", "avi", "mov") }
-            withContext(Dispatchers.Main) {
-                _videosInFolder.value = videos?.toList() ?: emptyList()
+                // Update LiveData incrementally without duplication
+                withContext(Dispatchers.Main) {
+                    _videoFolders.value = newFolderList.toList() // Assign a fresh list
+                }
             }
         }
     }
@@ -122,27 +104,52 @@ class MediaViewModel : ViewModel() {
         }
     }
 
+
+    private val _audioFolders = MutableLiveData<List<FolderWithAudioCount>>()
+    val audioFolders: LiveData<List<FolderWithAudioCount>> get() = _audioFolders
+
+    private val _audiosInFolder = MutableLiveData<List<AudioModel>>()
+    val audiosInFolder: LiveData<List<AudioModel>> get() = _audiosInFolder
+
+    private val _documentFolders = MutableLiveData<List<File>>()
+    val documentFolders: LiveData<List<File>> get() = _documentFolders
+
+
+
+
+
+
+
+
     // Load audio folders in the background
     fun loadAudioFolders(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             val audioDirs = getAudioDirectories(context)
-            val folderWithAudioCountList = mutableListOf<FolderWithAudioCount>()
+
+            val newFolderList = mutableListOf<FolderWithAudioCount>()
 
             for (folder in audioDirs) {
-                val audioFiles = folder.listFiles { file -> file.isFile && file.extension in listOf("mp3", "wav", "flac", "aac") }
-                audioFiles?.forEach { file ->
-                    Log.d("AudioFile", "loadAudioFolders path: ${file.path} ")
-                    Log.d("AudioFile", "loadAudioFolders absolutePath: ${file.absolutePath} ")
+                val audioFiles = folder.listFiles { file ->
+                    file.isFile && file.extension in listOf("mp3", "wav", "flac", "aac")
                 }
-                val audioCount = audioFiles?.size ?: 0
-                folderWithAudioCountList.add(FolderWithAudioCount(folder, audioCount))
-            }
 
-            withContext(Dispatchers.Main) {
-                _audioFolders.value = folderWithAudioCountList
+                val audioCount = audioFiles?.size ?: 0
+
+                Log.d("AudioFile", "Folder: ${folder.absolutePath}, Count: $audioCount")
+
+                val folderWithAudioCount = FolderWithAudioCount(folder, audioCount)
+
+                newFolderList.add(folderWithAudioCount)
+
+                // Update LiveData incrementally without duplication
+                withContext(Dispatchers.Main) {
+                    _audioFolders.value = newFolderList.toList() // Assign a fresh list
+                }
             }
         }
     }
+
+
 
     // Load audios from a specific folder in the background
     fun loadAudiosFromFolder(folder: File) {
