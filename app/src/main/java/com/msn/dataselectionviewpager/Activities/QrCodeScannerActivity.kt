@@ -30,16 +30,18 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
     private val TAG = javaClass.simpleName
     private lateinit var locationManager: LocationManager
 
+
     private val qrCodeLauncher = registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
         if (result.contents != null) {
             val deviceInfo = result.contents.split(":")
             if (deviceInfo[0] == "WIFI_DIRECT") {
                 val deviceName = deviceInfo[1]
-                val deviceAddress = deviceInfo[2]
+                val deviceAddress = deviceInfo.subList(2, deviceInfo.size).joinToString(":") // Reconstruct MAC address
                 val device = WifiP2pDevice().apply {
                     this.deviceName = deviceName
-                    this.deviceAddress = deviceAddress
+                    this.deviceAddress = deviceAddress // Set the MAC address correctly
                 }
+                Log.d("mavirock", "deviceName: ${device.deviceName}, deviceAddress: ${device.deviceAddress}")
                 connectToDevice(device)
             }
         }

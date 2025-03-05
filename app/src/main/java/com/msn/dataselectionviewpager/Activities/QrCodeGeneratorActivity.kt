@@ -98,6 +98,8 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
         p2pConnectionManager.unregisterReceiver()
     }
 
+
+
     private fun generateQRCode() {
         val deviceInfo = "WIFI_DIRECT:${p2pConnectionManager.getDeviceName()}:${p2pConnectionManager.getDeviceAddress()}"
         val multiFormatWriter = MultiFormatWriter()
