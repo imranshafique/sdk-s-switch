@@ -34,12 +34,15 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
         locationManager =
             applicationContext.getSystemService(Context.LOCATION_SERVICE) as (LocationManager)
         binding.run {
             sendData.setOnClickListener {
                 if (AppUtils.hasPermission(this@DashboardActivity)){
-                    startActivity(Intent(this@DashboardActivity, QrCodeScannerActivity::class.java))
+                    startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
+
+
                 }else{
                     Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()
 
@@ -48,7 +51,8 @@ class DashboardActivity : AppCompatActivity() {
             receiveData.setOnClickListener {
                 if(arePermissionsGranted(sender_permissions)&& isLocationEnabled()){
 //                    startActivity(Intent(this@DashboardActivity, WifiReceiverActivity::class.java))
-                    startActivity(Intent(this@DashboardActivity, QrCodeGeneratorActivity::class.java))
+                    startActivity(Intent(this@DashboardActivity, QrCodeScannerActivity::class.java))
+
 
                 }else{
                     Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()

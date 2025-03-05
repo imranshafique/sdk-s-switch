@@ -30,7 +30,7 @@ class FileTransferSDK(
     }
 
 
-     private var listener: FileTransferListener? = null
+    private var listener: FileTransferListener? = null
     private val TAG = javaClass.simpleName
     private var totalData: Int = 0
     private var transferredData:Int = 0

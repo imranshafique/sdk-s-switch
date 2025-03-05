@@ -5,10 +5,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.net.wifi.WifiManager
 import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
+import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import com.msn.smartswitch.ServerClient.ClientClass
@@ -174,9 +177,17 @@ class P2PConnectionManager(private val context: Context) {
         )
 
     }
+    fun getDeviceName(): String {
+        return Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
+            ?: Build.MODEL // Fallback to device model if name is not set
+    }
+
+    fun getDeviceAddress(): String {
+        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiInfo = wifiManager.connectionInfo
+        return wifiInfo.macAddress
+    }
 }
-
-
 
 
 interface P2PConnectionListener {
