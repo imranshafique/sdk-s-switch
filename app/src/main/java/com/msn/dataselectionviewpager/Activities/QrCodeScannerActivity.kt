@@ -29,10 +29,11 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
 
     lateinit var binding: ActivityQrCodeScannerBinding
     private lateinit var p2pConnectionManager: P2PConnectionManager
-    private val TAG = "QrCodeScannerActivitySide"
+    private val TAG = "mavi"
     private lateinit var locationManager: LocationManager
     private var scannedDeviceName: String? = null
 
+    private var isConnecting = false // Flag to prevent multiple calls
 
     private val qrCodeLauncher =
         registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
@@ -105,14 +106,17 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
         Log.d(TAG, "Available peers: $peers")
         Log.d(TAG, "Available scannedDeviceName: $scannedDeviceName")
 
-        // Ensure we have the scanned device name
+        if (isConnecting) {
+            Log.d(TAG, "Already attempting to connect. Skipping redundant calls.")
+            return // Prevent duplicate connection attempts
+        }
+
         scannedDeviceName = scannedDeviceName ?: return
         val targetDevice = peers.find { it.deviceName == scannedDeviceName }
+
         if (targetDevice != null) {
-            Log.d(
-                TAG,
-                "Found scanned device in discovered peers: ${targetDevice.deviceName} - ${targetDevice.deviceAddress}"
-            )
+            Log.d(TAG, "Found scanned device: ${targetDevice.deviceName} - ${targetDevice.deviceAddress}")
+            isConnecting = true // Set flag before connecting
             connectToDevice(targetDevice)
         } else {
             Log.d(TAG, "Scanned device not found in available peers. Retrying discovery...")
@@ -144,7 +148,6 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
 
         Toast.makeText(this, "Connecting to ${device.deviceName}...", Toast.LENGTH_SHORT).show()
 
-        // First, disconnect from any existing group
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -153,9 +156,9 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
                 Manifest.permission.NEARBY_WIFI_DEVICES
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
             return
         }
+
         p2pConnectionManager.wifiP2pManager.requestGroupInfo(p2pConnectionManager.wifiP2pChannel) { group ->
             if (group != null) {
                 Log.d("mavi", "Removing existing group before connecting...")
@@ -191,9 +194,9 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
                 Manifest.permission.NEARBY_WIFI_DEVICES
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-
             return
         }
+
         p2pConnectionManager.wifiP2pManager.connect(
             p2pConnectionManager.wifiP2pChannel,
             config,
@@ -201,12 +204,12 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
                 override fun onSuccess() {
                     Log.d("mavi", "Connection successful to device: ${device.deviceName}")
                     Toast.makeText(this@QrCodeScannerActivity, "Connected to ${device.deviceName}!", Toast.LENGTH_SHORT).show()
-
                 }
 
                 override fun onFailure(reason: Int) {
                     Log.e("mavi", "Connection failed with reason: $reason")
                     Toast.makeText(this@QrCodeScannerActivity, "Connection failed: $reason", Toast.LENGTH_SHORT).show()
+                    isConnecting = false // Reset flag on failure
                 }
             }
         )
