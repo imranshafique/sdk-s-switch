@@ -18,6 +18,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import androidx.viewpager2.widget.ViewPager2
 import com.msn.dataselectionviewpager.Activities.QrCodeGeneratorActivity
+import com.msn.dataselectionviewpager.Activities.QrCodeScannerActivity
 import com.msn.dataselectionviewpager.Activities.WifiSenderActivity
 import com.msn.dataselectionviewpager.Adapter.ViewPagerAdapter.FragmentAdapter
 import com.msn.dataselectionviewpager.databinding.ActivityMainBinding
@@ -136,9 +137,8 @@ class MainActivity : AppCompatActivity() {
                     if(arePermissionsGranted(sender_permissions)&& isLocationEnabled()){
 
                         startActivity(Intent(this@MainActivity, QrCodeGeneratorActivity::class.java))
-
-
-//                        startActivity(Intent(this@MainActivity, WifiSenderActivity::class.java))
+                    //                        startActivity(Intent(this@MainActivity, QrCodeScannerActivity::class.java))
+                    //                        startActivity(Intent(this@MainActivity, WifiSenderActivity::class.java))
 
                     }else{
                         Toast.makeText(this@MainActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()

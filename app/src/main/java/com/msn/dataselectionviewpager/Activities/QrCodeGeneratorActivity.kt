@@ -98,10 +98,9 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
         p2pConnectionManager.unregisterReceiver()
     }
 
-
-
     private fun generateQRCode() {
         val deviceInfo = "WIFI_DIRECT:${p2pConnectionManager.getDeviceName()}:${p2pConnectionManager.getDeviceAddress()}"
+        Log.d("mavirock", "generateQRCode: devices ${p2pConnectionManager.getDeviceName()} address  ${p2pConnectionManager.getDeviceAddress()}")
         val multiFormatWriter = MultiFormatWriter()
         try {
             val bitMatrix: BitMatrix = multiFormatWriter.encode(deviceInfo, BarcodeFormat.QR_CODE, 200, 200)
@@ -113,6 +112,8 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
             e.printStackTrace()
         }
     }
+
+
 
 
 

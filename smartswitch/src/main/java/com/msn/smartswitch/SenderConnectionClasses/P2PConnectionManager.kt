@@ -18,11 +18,12 @@ import com.msn.smartswitch.ServerClient.ClientClass
 import com.msn.smartswitch.ServerClient.ServerClass
 import com.msn.smartswitch.Models.AppConstant.serverAddress
 import com.msn.smartswitch.ServerClient.ConnectionCallBack
+import java.net.NetworkInterface
 
 class P2PConnectionManager(private val context: Context) {
 
     private var listener: P2PConnectionListener? = null
-    private val TAG = javaClass.simpleName
+    private val TAG = "mavi"
     val wifiP2pManager: WifiP2pManager by lazy {
         context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
     }
@@ -45,18 +46,25 @@ class P2PConnectionManager(private val context: Context) {
                             listener?.onPeersAvailable(peerList.deviceList.toList())
                         }
                     }
+
                     WifiP2pManager.WIFI_P2P_CONNECTION_CHANGED_ACTION -> {
-                        Log.d(TAG, "onReceive: WIFI_P2P_CONNECTION_CHANGED_ACTION wifiP2pChannel: $wifiP2pChannel")
+                        Log.d(
+                            TAG,
+                            "onReceive: WIFI_P2P_CONNECTION_CHANGED_ACTION wifiP2pChannel: $wifiP2pChannel"
+                        )
                         wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
-                            Log.d(TAG, "onReceive Connection changed: ${wifiP2pInfo.groupOwnerAddress}")
+                            Log.d(
+                                TAG,
+                                "onReceive Connection changed: ${wifiP2pInfo.groupOwnerAddress}"
+                            )
                             serverAddress = wifiP2pInfo.groupOwnerAddress
                             Log.d(TAG, "onReceive: serverAddress: $serverAddress")
                             if (wifiP2pInfo.groupOwnerAddress != null) {
 
                                 if (wifiP2pInfo.isGroupOwner) {
                                     Log.d(TAG, "onReceive Device is group owner, starting server")
-                                    if (!isServerStarted){
-                                        val serverClass = ServerClass(object:ConnectionCallBack{
+                                    if (!isServerStarted) {
+                                        val serverClass = ServerClass(object : ConnectionCallBack {
                                             override fun onSuccess() {
                                                 listener?.onGroupOwnerConnected()
                                             }
@@ -70,12 +78,12 @@ class P2PConnectionManager(private val context: Context) {
                                         isServerStarted = true
                                     }
 
-                                    
+
                                 } else {
                                     Log.d(TAG, "onReceive Device is client, starting client class")
-                                    if (!isClientStarted){
+                                    if (!isClientStarted) {
                                         val clientClass = ClientClass(wifiP2pInfo.groupOwnerAddress,
-                                            object:ConnectionCallBack{
+                                            object : ConnectionCallBack {
                                                 override fun onSuccess() {
                                                     listener?.onClientConnected()
 
@@ -113,6 +121,7 @@ class P2PConnectionManager(private val context: Context) {
             broadcastReceiver = null
         }
     }
+
     fun disconnectWifiDirectIfConnected() {
         wifiP2pManager.requestGroupInfo(
             wifiP2pChannel
@@ -125,11 +134,13 @@ class P2PConnectionManager(private val context: Context) {
                         Log.d(TAG, "onSuccess: wifiDisConnected")
                         startDiscovery()
                     }
+
                     override fun onFailure(reason: Int) = Unit
                 })
             }
         }
     }
+
     fun startDiscovery() {
         isServerStarted = false
         isClientStarted = false
@@ -146,7 +157,7 @@ class P2PConnectionManager(private val context: Context) {
     }
 
     fun connectToPeer(deviceAddress: String) {
-        Log.d("mavi", "connectToPeer called" )
+        Log.d("mavi", "connectToPeer called")
 
         val config = WifiP2pConfig().apply {
             this.deviceAddress = deviceAddress
@@ -177,17 +188,20 @@ class P2PConnectionManager(private val context: Context) {
         )
 
     }
+
     fun getDeviceName(): String {
         return Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
             ?: Build.MODEL // Fallback to device model if name is not set
     }
 
     fun getDeviceAddress(): String {
-        val wifiManager = context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
+        val wifiManager =
+            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
         val wifiInfo = wifiManager.connectionInfo
         return wifiInfo.macAddress
     }
 }
+
 
 
 interface P2PConnectionListener {

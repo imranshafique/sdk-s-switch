@@ -35,7 +35,8 @@ class FileTransferSDK(
     private var totalData: Int = 0
     private var transferredData:Int = 0
     private var totalBytesSent = 0L
-    private var totalBytesToSend: Long = 0L  // Total bytes of all files
+    private var totalBytesToSend: Long = 0L
+    // Total bytes of all files
 
     fun setListener(listener: FileTransferListener) {
         this.listener = listener

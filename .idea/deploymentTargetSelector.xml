@@ -8,7 +8,7 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="PhysicalDevice" identifier="serial=R58NA229GSV" />
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=51e9a691220" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
