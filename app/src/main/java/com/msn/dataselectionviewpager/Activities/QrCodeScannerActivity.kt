@@ -5,16 +5,15 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.LocationManager
-import android.net.wifi.WpsInfo
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import com.journeyapps.barcodescanner.ScanContract
 import com.journeyapps.barcodescanner.ScanIntentResult
 import com.journeyapps.barcodescanner.ScanOptions
@@ -35,8 +34,7 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
 
     private var isConnecting = false // Flag to prevent multiple calls
 
-    private val qrCodeLauncher =
-        registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
+    private val qrCodeLauncher = registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             if (result.contents != null) {
                 val deviceInfo = result.contents.split(":")
                 if (deviceInfo[0] == "WIFI_DIRECT") {
@@ -53,7 +51,6 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
                         "deviceName: ${device.deviceName}, deviceAddress: ${device.deviceAddress}"
                     )
                     p2pConnectionManager.startDiscovery()
-//                connectToDevice(device)
                 }
             }
         }
@@ -62,8 +59,7 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
         super.onCreate(savedInstanceState)
         binding = ActivityQrCodeScannerBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        locationManager =
-            applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         p2pConnectionManager = P2PConnectionManager(this)
         p2pConnectionManager.setListener(this)
@@ -74,11 +70,7 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
             p2pConnectionManager.disconnectWifiDirectIfConnected()
             p2pConnectionManager.startDiscovery()
         } else {
-            Toast.makeText(
-                this@QrCodeScannerActivity,
-                "Something went wrong. Check internet and GPS.",
-                Toast.LENGTH_SHORT
-            ).show()
+            Toast.makeText(this@QrCodeScannerActivity, "Something went wrong. Check internet and GPS", Toast.LENGTH_SHORT).show()
             finish()
         }
         val options = ScanOptions().apply {
@@ -103,21 +95,19 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
     }
 
     override fun onPeersAvailable(peers: List<WifiP2pDevice>) {
-        Log.d(TAG, "Available peers: $peers")
+        Log.d("peers", "Available peers: $peers")
         Log.d(TAG, "Available scannedDeviceName: $scannedDeviceName")
-
         if (isConnecting) {
             Log.d(TAG, "Already attempting to connect. Skipping redundant calls.")
             return // Prevent duplicate connection attempts
         }
-
         scannedDeviceName = scannedDeviceName ?: return
         val targetDevice = peers.find { it.deviceName == scannedDeviceName }
 
         if (targetDevice != null) {
             Log.d(TAG, "Found scanned device: ${targetDevice.deviceName} - ${targetDevice.deviceAddress}")
             isConnecting = true // Set flag before connecting
-            connectToDevice(targetDevice)
+            proceedToConnect(targetDevice) // No existing group, proceed directly
         } else {
             Log.d(TAG, "Scanned device not found in available peers. Retrying discovery...")
             p2pConnectionManager.startDiscovery()
@@ -143,59 +133,26 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    private fun connectToDevice(device: WifiP2pDevice) {
-        Log.d("ConnectionAttempt", "Attempting connection to device: ${device.deviceName} - ${device.deviceAddress}")
-
-        Toast.makeText(this, "Connecting to ${device.deviceName}...", Toast.LENGTH_SHORT).show()
-
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.NEARBY_WIFI_DEVICES
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
-        }
-
-        p2pConnectionManager.wifiP2pManager.requestGroupInfo(p2pConnectionManager.wifiP2pChannel) { group ->
-            if (group != null) {
-                Log.d("mavi", "Removing existing group before connecting...")
-                p2pConnectionManager.wifiP2pManager.removeGroup(p2pConnectionManager.wifiP2pChannel, object :
-                    WifiP2pManager.ActionListener {
-                    override fun onSuccess() {
-                        Log.d("mavi", "Successfully removed existing group. Proceeding to connect...")
-                        proceedToConnect(device)
-                    }
-
-                    override fun onFailure(reason: Int) {
-                        Log.e("mavi", "Failed to remove group. Proceeding anyway. Reason: $reason")
-                        proceedToConnect(device) // Try connecting anyway
-                    }
-                })
-            } else {
-                proceedToConnect(device) // No existing group, proceed directly
-            }
-        }
-    }
-
     private fun proceedToConnect(device: WifiP2pDevice) {
         val config = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
-            wps.setup = WpsInfo.PBC
+
         }
 
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.NEARBY_WIFI_DEVICES
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            return
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.NEARBY_WIFI_DEVICES) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("mavi", "NEARBY_WIFI_DEVICES permission not granted")
+                return
+            }
+        } else { // Android 12 and below
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("mavi", "ACCESS_FINE_LOCATION permission not granted")
+                return
+            }
         }
+
+        Log.d("mavi", "Try to connect")
 
         p2pConnectionManager.wifiP2pManager.connect(
             p2pConnectionManager.wifiP2pChannel,

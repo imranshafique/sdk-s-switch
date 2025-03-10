@@ -26,4 +26,6 @@
     <string name="device_name">name</string>
     <string name="connect">Connect</string>
     <string name="done">Done</string>
+    <string name="connectionType">Connection Type</string>
+    <string name="or">OR</string>
 </resources>

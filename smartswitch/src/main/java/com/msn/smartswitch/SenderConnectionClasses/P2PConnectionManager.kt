@@ -60,7 +60,6 @@ class P2PConnectionManager(private val context: Context) {
                             serverAddress = wifiP2pInfo.groupOwnerAddress
                             Log.d(TAG, "onReceive: serverAddress: $serverAddress")
                             if (wifiP2pInfo.groupOwnerAddress != null) {
-
                                 if (wifiP2pInfo.isGroupOwner) {
                                     Log.d(TAG, "onReceive Device is group owner, starting server")
                                     if (!isServerStarted) {
@@ -68,7 +67,6 @@ class P2PConnectionManager(private val context: Context) {
                                             override fun onSuccess() {
                                                 listener?.onGroupOwnerConnected()
                                             }
-
                                             override fun onFailure(reason: String) {
                                                 Log.d(TAG, "onFailure: ")
                                             }
@@ -77,7 +75,6 @@ class P2PConnectionManager(private val context: Context) {
                                         serverClass.start()
                                         isServerStarted = true
                                     }
-
 
                                 } else {
                                     Log.d(TAG, "onReceive Device is client, starting client class")
@@ -97,7 +94,6 @@ class P2PConnectionManager(private val context: Context) {
                                         clientClass.start()
                                         isClientStarted = true
                                     }
-
                                 }
                             } else {
                                 Log.d(TAG, "onReceive No connection found")
