@@ -11,6 +11,8 @@ import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -43,6 +45,9 @@ class P2PConnectionManager(private val context: Context) {
                 when (intent.action) {
                     WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
                         wifiP2pManager.requestPeers(wifiP2pChannel) { peerList ->
+
+                            Log.d(TAG, "peerList ${peerList.deviceList.toString()}")
+
                             listener?.onPeersAvailable(peerList.deviceList.toList())
                         }
                     }
@@ -137,6 +142,9 @@ class P2PConnectionManager(private val context: Context) {
         }
     }
 
+
+
+
     fun startDiscovery() {
         isServerStarted = false
         isClientStarted = false
@@ -147,55 +155,13 @@ class P2PConnectionManager(private val context: Context) {
             }
 
             override fun onFailure(reason: Int) {
+                Log.d(TAG, "startDiscovery onFailure ")
+
                 listener?.onError("Discovery failed: $reason")
             }
         })
     }
 
-    fun connectToPeer(deviceAddress: String) {
-        Log.d("mavi", "connectToPeer called")
-
-        val config = WifiP2pConfig().apply {
-            this.deviceAddress = deviceAddress
-            wps.setup = WpsInfo.PBC
-        }
-
-        wifiP2pManager.connect(
-            wifiP2pChannel,
-            config,
-            object : WifiP2pManager.ActionListener {
-                override fun onSuccess() {
-                    Log.d(TAG, "Connection successful to device: ${deviceAddress}")
-                }
-
-                override fun onFailure(reason: Int) {
-                    Log.e(TAG, "Connection failed with reason: $reason")
-                    val errorMessage = when (reason) {
-                        WifiP2pManager.BUSY -> "Wi-Fi Direct is busy, try again later."
-                        WifiP2pManager.ERROR -> "An internal error occurred."
-                        WifiP2pManager.P2P_UNSUPPORTED -> "Wi-Fi Direct is not supported on this device."
-                        WifiP2pManager.NO_SERVICE_REQUESTS -> "No service requests found."
-                        else -> "Unknown error code: $reason"
-                    }
-                    Log.e("mavi", "Connection failed: $errorMessage")
-                    listener?.onError(errorMessage)
-                }
-            }
-        )
-
-    }
-
-    fun getDeviceName(): String {
-        return Settings.Global.getString(context.contentResolver, Settings.Global.DEVICE_NAME)
-            ?: Build.MODEL // Fallback to device model if name is not set
-    }
-
-    fun getDeviceAddress(): String {
-        val wifiManager =
-            context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager
-        val wifiInfo = wifiManager.connectionInfo
-        return wifiInfo.macAddress
-    }
 }
 
 

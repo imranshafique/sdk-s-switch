@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.databinding.ActivityReceiverSelectionMethodBinding
-import com.msn.dataselectionviewpager.databinding.ActivitySenderSelectionMethodBinding
 
 class ReceiverConnectioTypeActivity : AppCompatActivity() {
     var binding:ActivityReceiverSelectionMethodBinding?=null
@@ -12,8 +11,6 @@ class ReceiverConnectioTypeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding=ActivityReceiverSelectionMethodBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-
-
 
         binding?.apply {
             btnWifi.setOnClickListener {

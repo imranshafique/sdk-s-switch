@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
@@ -25,10 +26,21 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         dataReceiverManager.setListener(this)
         dataReceiverManager.startReceive()
         binding.btnDisconnect.setOnClickListener {
+            finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         }
+       onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finish()
+                    startActivity(Intent(this@DataReceiveActivity, DashboardActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                }
+            }
+        )
 
     }
 
@@ -80,4 +92,5 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         }
 
     }
+
 }

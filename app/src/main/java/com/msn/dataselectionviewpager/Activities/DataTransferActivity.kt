@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
@@ -41,10 +42,21 @@ class DataTransferActivity : AppCompatActivity() {
         binding.tvTotalFiles.text = "${resources?.getString(R.string.totalFiles)} ${selectedPath.size}"
         fileTransferSDK.sendFiles()
         binding.btnDisconnect.setOnClickListener {
+            finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
          }
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finish()
+                    startActivity(Intent(this@DataTransferActivity, DashboardActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                }
+            }
+        )
         // Set up the listener for file transfer progress
         fileTransferSDK.setListener(object : FileTransferSDK.FileTransferListener {
             override fun onFileSendSuccess(progress: Int, totalBytesSent: Long) {

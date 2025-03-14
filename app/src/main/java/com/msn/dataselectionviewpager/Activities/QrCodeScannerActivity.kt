@@ -33,7 +33,6 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
     private var scannedDeviceName: String? = null
 
     private var isConnecting = false // Flag to prevent multiple calls
-
     private val qrCodeLauncher = registerForActivityResult(ScanContract()) { result: ScanIntentResult ->
             if (result.contents != null) {
                 val deviceInfo = result.contents.split(":")
@@ -46,11 +45,16 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
                         this.deviceName = deviceName
                         this.deviceAddress = deviceAddress // Set the MAC address correctly
                     }
-                    Log.d(
-                        "mavirock",
-                        "deviceName: ${device.deviceName}, deviceAddress: ${device.deviceAddress}"
-                    )
-                    p2pConnectionManager.startDiscovery()
+                    Log.d("mavirock", "deviceName: ${device.deviceName}, deviceAddress: ${device.deviceAddress}")
+                    if (AppUtils.isInternetAvailable(this) && isLocationEnabled(this)) {
+                        p2pConnectionManager.disconnectWifiDirectIfConnected()
+                        p2pConnectionManager.startDiscovery()
+                    } else {
+                        Toast.makeText(this@QrCodeScannerActivity, "Something went wrong. Check internet and GPS", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+
+
                 }
             }
         }
@@ -65,14 +69,6 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
         p2pConnectionManager.setListener(this)
         p2pConnectionManager.registerReceiver()
 
-
-        if (AppUtils.isInternetAvailable(this) && isLocationEnabled(this)) {
-            p2pConnectionManager.disconnectWifiDirectIfConnected()
-            p2pConnectionManager.startDiscovery()
-        } else {
-            Toast.makeText(this@QrCodeScannerActivity, "Something went wrong. Check internet and GPS", Toast.LENGTH_SHORT).show()
-            finish()
-        }
         val options = ScanOptions().apply {
             setDesiredBarcodeFormats(ScanOptions.QR_CODE)
             setPrompt("Scan a QR code")
