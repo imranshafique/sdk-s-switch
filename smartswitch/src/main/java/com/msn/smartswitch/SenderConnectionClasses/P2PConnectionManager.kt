@@ -242,17 +242,6 @@ class P2PConnectionManager(private val context: Context) {
             deviceAddress = device.deviceAddress
         }
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.NEARBY_WIFI_DEVICES) != PackageManager.PERMISSION_GRANTED) {
-                Log.d("mavi", "NEARBY_WIFI_DEVICES permission not granted")
-                return
-            }
-        } else { // Android 12 and below
-            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                Log.d("mavi", "ACCESS_FINE_LOCATION permission not granted")
-                return
-            }
-        }
 
         Log.d("mavi", "Try to connect")
 
