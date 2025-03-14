@@ -1,29 +1,31 @@
 package com.msn.smartswitch.SenderConnectionClasses
 
 
+import android.Manifest
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.net.wifi.WifiManager
-import android.net.wifi.WpsInfo
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.wifi.p2p.WifiP2pConfig
 import android.net.wifi.p2p.WifiP2pDevice
 import android.net.wifi.p2p.WifiP2pManager
 import android.os.Build
-import android.os.Handler
-import android.os.Looper
-import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import com.msn.smartswitch.ServerClient.ClientClass
-import com.msn.smartswitch.ServerClient.ServerClass
+import androidx.core.app.ActivityCompat
+import com.google.zxing.BarcodeFormat
+import com.google.zxing.MultiFormatWriter
+import com.google.zxing.common.BitMatrix
+import com.journeyapps.barcodescanner.BarcodeEncoder
 import com.msn.smartswitch.Models.AppConstant.serverAddress
+import com.msn.smartswitch.ServerClient.ClientClass
 import com.msn.smartswitch.ServerClient.ConnectionCallBack
-import java.net.NetworkInterface
+import com.msn.smartswitch.ServerClient.ServerClass
 
 class P2PConnectionManager(private val context: Context) {
-
+    private val QR_CODE_SIZE = 200
     private var listener: P2PConnectionListener? = null
     private val TAG = "mavi"
     val wifiP2pManager: WifiP2pManager by lazy {
@@ -72,6 +74,7 @@ class P2PConnectionManager(private val context: Context) {
                                             override fun onSuccess() {
                                                 listener?.onGroupOwnerConnected()
                                             }
+
                                             override fun onFailure(reason: String) {
                                                 Log.d(TAG, "onFailure: ")
                                             }
@@ -143,8 +146,6 @@ class P2PConnectionManager(private val context: Context) {
     }
 
 
-
-
     fun startDiscovery() {
         isServerStarted = false
         isClientStarted = false
@@ -162,8 +163,121 @@ class P2PConnectionManager(private val context: Context) {
         })
     }
 
-}
+    // Generating QR Code with Device Info
 
+    fun generateQRCode(
+        callback: (Bitmap?) -> Unit
+    ) {
+        getWifiDirectDeviceInfo { deviceName, deviceAddress ->
+            val deviceInfo = "WIFI_DIRECT:$deviceName:$deviceAddress"
+            Log.d(TAG, "Device Name: $deviceName, Address: $deviceAddress")
+
+            try {
+                val bitMatrix: BitMatrix = MultiFormatWriter().encode(
+                    deviceInfo,
+                    BarcodeFormat.QR_CODE,
+                    QR_CODE_SIZE,
+                    QR_CODE_SIZE
+                )
+                callback(BarcodeEncoder().createBitmap(bitMatrix))
+            } catch (e: Exception) {
+                Log.e(TAG, "Error generating QR code: ${e.message}", e)
+                callback(null)
+            }
+        }
+    }
+
+    // Get Device info using wifiP2pManager that will used to connect peer
+
+    fun getWifiDirectDeviceInfo(
+        callback: (String, String) -> Unit
+    ) {
+        if (!hasRequiredPermissions(context)) {
+            Log.e(TAG, "Missing required permissions")
+            return
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // For API 29 and above, use requestDeviceInfo()
+            wifiP2pManager.requestDeviceInfo(wifiP2pChannel) { wifiP2pDevice ->
+                if (wifiP2pDevice != null) {
+                    callback(wifiP2pDevice.deviceName, wifiP2pDevice.deviceAddress)
+                } else {
+                    Log.e(TAG, "Failed to get device info using requestDeviceInfo()")
+                }
+            }
+        } else {
+            // For API 28,  // Get Device info using wifiP2pManager that will used to connect peer
+            wifiP2pManager.requestGroupInfo(wifiP2pChannel) { group ->
+                if (group != null && group.isGroupOwner) {
+                    val localDevice = group.owner
+                    callback(localDevice.deviceName, localDevice.deviceAddress)
+                } else {
+                    Log.e(TAG, "Failed to get local device info using requestGroupInfo()")
+                }
+            }
+        }
+
+    }
+
+    // Check if the required permissions are granted
+    private fun hasRequiredPermissions(context: Context): Boolean {
+        return ActivityCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED &&
+                (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                        ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.NEARBY_WIFI_DEVICES
+                        ) == PackageManager.PERMISSION_GRANTED)
+    }
+
+    // Connect to Specific Device after scan with QR Code
+    fun proceedToConnect(
+        device: WifiP2pDevice,
+        onSuccess: () -> Unit,
+        onFailure: (reason: Int) -> Unit
+    ) {
+        val config = WifiP2pConfig().apply {
+            deviceAddress = device.deviceAddress
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) { // Android 13+
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.NEARBY_WIFI_DEVICES) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("mavi", "NEARBY_WIFI_DEVICES permission not granted")
+                return
+            }
+        } else { // Android 12 and below
+            if (ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("mavi", "ACCESS_FINE_LOCATION permission not granted")
+                return
+            }
+        }
+
+        Log.d("mavi", "Try to connect")
+
+        wifiP2pManager.connect(
+       wifiP2pChannel,
+            config,
+            object : WifiP2pManager.ActionListener {
+                override fun onSuccess() {
+                    Log.d("mavi", "Connection successful to device: ${device.deviceName}")
+                    Toast.makeText(context, "Connected to ${device.deviceName}!", Toast.LENGTH_SHORT).show()
+                    onSuccess.invoke()
+                }
+
+                override fun onFailure(reason: Int) {
+                    Log.e("mavi", "Connection failed with reason: $reason")
+                    Toast.makeText(context, "Connection failed: $reason", Toast.LENGTH_SHORT).show()
+                    onFailure.invoke(reason)
+                }
+            }
+        )
+    }
+
+
+
+}
 
 
 interface P2PConnectionListener {

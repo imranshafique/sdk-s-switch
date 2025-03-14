@@ -60,18 +60,15 @@ class DataReceiverManger {
                     listener?.onConnectionError()
                     return@launch
                 }
-
                 val count = dataInputStream?.readInt() ?: 0
                 totalBytesToReceive= dataInputStream?.readLong() ?: 0
                 Log.d(TAG, "startReceive: Expected file count: $count")
                 listener?.onTotalCountReceived(count, totalBytesToReceive)
                 Log.d(TAG, "startReceive: Expected file length: $totalBytesToReceive")
-
                 for (i in 0 until count) {
                     Log.d(TAG, "startReceive: Receiving file $i/$count")
                     receiveFile()
                 }
-
 
             } catch (e: IOException) {
                 Log.e(TAG, "startReceive: Exception: ${e.localizedMessage}")
@@ -116,7 +113,6 @@ class DataReceiverManger {
                 folderName
             )
             if (!folderPath.exists()) folderPath.mkdirs()
-
             if (fileName.isNotEmpty()) {
                 var receivedFile = File(folderPath, fileName)
                 var fileCounter = 1
