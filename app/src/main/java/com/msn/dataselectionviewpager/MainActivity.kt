@@ -22,8 +22,8 @@ import com.msn.dataselectionviewpager.Activities.QrCodeScannerActivity
 import com.msn.dataselectionviewpager.Activities.SenderConnectionTypeActivity
 import com.msn.dataselectionviewpager.Activities.WifiSenderActivity
 import com.msn.dataselectionviewpager.Adapter.ViewPagerAdapter.FragmentAdapter
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.databinding.ActivityMainBinding
-import com.msn.smartswitch.Models.AppConstant.selectedPath
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding

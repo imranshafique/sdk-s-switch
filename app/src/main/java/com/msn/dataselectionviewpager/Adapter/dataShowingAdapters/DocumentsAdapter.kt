@@ -12,8 +12,8 @@ import android.widget.TextView
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
- import com.msn.dataselectionviewpager.dataClass.DocumentModel
-import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.dataClass.DocumentModel
 import java.io.File
 
 class DocumentsAdapter(private val context: Context) : RecyclerView.Adapter<DocumentsAdapter.ViewHolder>() {

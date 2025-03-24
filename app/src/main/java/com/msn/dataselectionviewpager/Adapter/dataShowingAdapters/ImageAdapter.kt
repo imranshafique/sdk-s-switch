@@ -15,7 +15,7 @@ import com.msn.dataselectionviewpager.R
 
 
 import androidx.core.content.FileProvider
- import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 
 
 class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {
