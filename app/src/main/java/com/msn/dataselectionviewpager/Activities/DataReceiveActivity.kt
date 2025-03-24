@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.databinding.ActivityReceiverBinding
@@ -20,6 +21,8 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         super.onCreate(savedInstanceState)
         binding= ActivityReceiverBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         dataReceiverManager = DataReceiverManger()
         dataReceiverManager.setListener(this)
         dataReceiverManager.startReceive()
@@ -30,7 +33,10 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         }
 
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+         window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
     override fun onFileReceiveSuccess() {
         runOnUiThread {  }
         Log.d(TAG, "onFileReceiveSuccess: ")
