@@ -3,8 +3,8 @@ package com.msn.smartswitch.SenderConnectionClasses
 import android.app.Activity
 import android.content.Context
 import android.util.Log
+import android.view.WindowManager
 import com.msn.smartswitch.ServerClient.Sockets
-import com.msn.smartswitch.Models.AppConstant.selectedPath
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -35,13 +35,14 @@ class FileTransferSDK(
     private var totalData: Int = 0
     private var transferredData:Int = 0
     private var totalBytesSent = 0L
-    private var totalBytesToSend: Long = 0L
-    // Total bytes of all files
+    private var totalBytesToSend: Long = 0L  // Total bytes of all files
 
     fun setListener(listener: FileTransferListener) {
         this.listener = listener
     }
-    fun sendFiles() {
+
+    fun sendFiles(selectedPath: ArrayList<String>,activity: Activity) {
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         CoroutineScope(Dispatchers.IO).launch {
             val socket = Sockets.getSocket()
             if (socket == null || socket.isClosed) {
@@ -52,21 +53,26 @@ class FileTransferSDK(
             Log.d(TAG, "sendFiles: socket: $socket")
             totalBytesToSend = getTotalSizeInBytes(selectedPath)
             Log.d(TAG, "sendFiles: totalSize: $totalBytesToSend")
+
             val dataOutputStream = DataOutputStream(socket.getOutputStream())
+
             Log.d(TAG, "sendFiles: Sending file count: ${selectedPath.size}")
             Log.d(TAG, "sendFiles: Sending file count: ${selectedPath}")
             totalData = selectedPath.size
             dataOutputStream.writeInt(selectedPath.size)
             dataOutputStream.writeLong(totalBytesToSend)
             dataOutputStream.flush()
-            Log.d(TAG, "")
 
-            for (path in selectedPath) {
+            // **Create a copy of the list to prevent modification issues**
+            val selectedPathCopy = ArrayList(selectedPath)
+
+            for (path in selectedPathCopy) {
                 Log.d(TAG, "sendFiles: Sending file: $path")
                 sendData(File(path), dataOutputStream, socket)
             }
         }
     }
+
     private fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
         var totalSize = 0L
         for (path in filePaths) {
@@ -85,7 +91,7 @@ class FileTransferSDK(
                 dataOutputStream.writeUTF(file.path)
                 dataOutputStream.flush()
 
-                val buffer = ByteArray(1024 * 4) // 4KB buffer for efficient streaming
+                val buffer = ByteArray(1024 * 256) // 256KB buffer for efficient streaming
                 var bytesRead: Int
 
                 BufferedInputStream(FileInputStream(file)).use { bis ->

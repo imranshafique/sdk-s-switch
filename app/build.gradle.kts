@@ -98,7 +98,7 @@ dependencies {
     implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
     implementation ("com.squareup.okhttp3:logging-interceptor:4.10.0")
 
-     implementation ("com.hbb20:ccp:2.5.0")
+    implementation ("com.hbb20:ccp:2.5.0")
     implementation ("androidx.room:room-runtime:2.5.0")
     kapt ("androidx.room:room-compiler:2.5.0")
     implementation ("androidx.room:room-ktx:2.5.0")
@@ -112,6 +112,21 @@ dependencies {
     implementation("com.journeyapps:zxing-android-embedded:4.3.0")
     implementation("com.google.zxing:core:3.5.1")
 
+
+    // camera x
+    val cameraxVersion = "1.5.0-alpha05"
+    // The following line is optional, as the core library is included indirectly by camera-camera2
+    implementation("androidx.camera:camera-core:${cameraxVersion}")
+    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
+    // If you want to additionally use the CameraX Lifecycle library
+    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
+    // If you want to additionally use the CameraX View class
+    implementation("androidx.camera:camera-view:${cameraxVersion}")
+    // If you want to additionally use the CameraX Extensions library
+    implementation("androidx.camera:camera-extensions:${cameraxVersion}")
+
+    // ML kit barcode reader
+    implementation("com.google.mlkit:barcode-scanning:17.3.0")
 
 }
 kapt {

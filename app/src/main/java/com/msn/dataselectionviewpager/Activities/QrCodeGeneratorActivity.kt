@@ -1,10 +1,13 @@
 package com.msn.dataselectionviewpager.Activities
 
+import android.content.Context
 import android.content.Intent
 import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +25,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityQrCodeGeneratorBinding.inflate(layoutInflater)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         setContentView(binding.root)
         p2pConnectionManager = P2PConnectionManager(this)
         p2pConnectionManager.setListener(this)
@@ -36,6 +40,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
         p2pConnectionManager.generateQRCode {
             binding.qrImageView.setImageBitmap(it)
             p2pConnectionManager.startDiscovery()
+
         }
 
         binding.refresh.setOnClickListener {
@@ -87,6 +92,9 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
     override fun onDestroy() {
         super.onDestroy()
         p2pConnectionManager.unregisterReceiver()
+    }
+    fun getDeviceName(context: Context): String {
+        return Settings.Secure.getString(context.contentResolver, "device_name") ?: "Unknown Device"
     }
 }
 

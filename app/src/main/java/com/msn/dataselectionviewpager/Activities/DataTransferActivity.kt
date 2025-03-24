@@ -10,8 +10,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.databinding.ActivitySendMultiFilesBinding
- import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.smartswitch.Models.Utilities
 import com.msn.smartswitch.Models.Utilities.Companion.formatSize
 import com.msn.smartswitch.SenderConnectionClasses.FileTransferSDK
 import dagger.hilt.android.AndroidEntryPoint
@@ -36,17 +37,19 @@ class DataTransferActivity : AppCompatActivity() {
             activity = this
         )
         var totalFilesSizes: Long = 0L // Ensure total size is a Long
-
         totalFilesSizes = getTotalSizeInBytes(selectedPath)
-        binding.tvTotalFilesSizes.text = getString(R.string.totalFilesSize) + " " + formatSize(totalFilesSizes)
+        binding.tvTotalFilesSizes.text = getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)
         binding.tvTotalFiles.text = "${resources?.getString(R.string.totalFiles)} ${selectedPath.size}"
-        fileTransferSDK.sendFiles()
+
+
+        fileTransferSDK.sendFiles(selectedPath,this)
+
         binding.btnDisconnect.setOnClickListener {
             finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
-         }
+        }
         onBackPressedDispatcher.addCallback(
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
@@ -118,7 +121,7 @@ class DataTransferActivity : AppCompatActivity() {
         })
     }
 
-    private fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
+    fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
         var totalSize = 0L
         for (path in filePaths) {
             val file = File(path)

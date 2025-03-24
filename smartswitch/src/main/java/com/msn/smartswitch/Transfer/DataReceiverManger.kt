@@ -1,7 +1,9 @@
 package com.msn.smartswitch.Transfer
 
+import android.app.Activity
 import android.os.Environment
 import android.util.Log
+import android.view.WindowManager
 import com.msn.smartswitch.ServerClient.Sockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +24,7 @@ class DataReceiverManger {
         fun onConnectionError()
         fun onConnectionClosed()
         fun onFileReceiveProgress(progress: Int, totalBytesReceived: Long)
-        fun onTotalCountReceived(count:Int, size:Long)
+        fun onTotalCountReceived(count: Int, size: Long)
     }
 
     private val TAG = javaClass.simpleName
@@ -36,12 +38,12 @@ class DataReceiverManger {
     private var dataInputStream: DataInputStream? = null
     private var filesReceived = 0
     private val existingSocket = Sockets.getSocket()
-    private  var totalBytesToReceive: Long = 0L
+    private var totalBytesToReceive: Long = 0L
     private var totalBytesReceived: Long = 0L
 
-   fun startReceive() {
+    fun startReceive(activity: Activity) {
         Log.d(TAG, "startReceive: Attempting to receive files")
-
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val socket = existingSocket
@@ -60,15 +62,18 @@ class DataReceiverManger {
                     listener?.onConnectionError()
                     return@launch
                 }
+
                 val count = dataInputStream?.readInt() ?: 0
-                totalBytesToReceive= dataInputStream?.readLong() ?: 0
+                totalBytesToReceive = dataInputStream?.readLong() ?: 0
                 Log.d(TAG, "startReceive: Expected file count: $count")
                 listener?.onTotalCountReceived(count, totalBytesToReceive)
                 Log.d(TAG, "startReceive: Expected file length: $totalBytesToReceive")
+
                 for (i in 0 until count) {
                     Log.d(TAG, "startReceive: Receiving file $i/$count")
                     receiveFile()
                 }
+
 
             } catch (e: IOException) {
                 Log.e(TAG, "startReceive: Exception: ${e.localizedMessage}")
@@ -81,7 +86,7 @@ class DataReceiverManger {
     private fun receiveFile() {
         try {
             val socket = existingSocket
-            var progress:Int = 0
+            var progress: Int = 0
             if (socket == null || socket.isClosed) {
                 Log.e(TAG, "receiveFile: Socket is closed or null")
                 listener?.onConnectionError()
@@ -96,14 +101,16 @@ class DataReceiverManger {
             // Read file length and path
             val fileLength = dataInputStream?.readLong() ?: 0
             if (fileLength <= 0) {
-                Log.e(TAG, "receiveFile: Invalid file length")
-                return
+                Log.e(TAG, "receiveFile: Invalid file length, skipping file.")
+                listener?.onFileReceiveFailure("Invalid file length")
+                return  // Skip the corrupt file
             }
 
             val filePath = dataInputStream?.readUTF() ?: ""
             if (filePath.isEmpty()) {
-                Log.e(TAG, "receiveFile: File path is empty")
-                return
+                Log.e(TAG, "receiveFile: File path is empty, skipping file.")
+                listener?.onFileReceiveFailure("Invalid file path")
+                return  // Skip the corrupt file
             }
 
             val fileName = File(filePath).name
@@ -113,10 +120,12 @@ class DataReceiverManger {
                 folderName
             )
             if (!folderPath.exists()) folderPath.mkdirs()
+
             if (fileName.isNotEmpty()) {
                 var receivedFile = File(folderPath, fileName)
                 var fileCounter = 1
-                val baseFileName = fileName.substringBeforeLast(".") // Get file name without extension
+                val baseFileName =
+                    fileName.substringBeforeLast(".") // Get file name without extension
                 val fileExtension = fileName.substringAfterLast(".", "") // Get file extension
 
                 while (receivedFile.exists()) {
@@ -124,36 +133,47 @@ class DataReceiverManger {
                     receivedFile = File(folderPath, newFileName)
                     fileCounter++
                 }
+
                 val fileOutputStream = FileOutputStream(receivedFile)
                 val bufferedOutputStream = BufferedOutputStream(fileOutputStream)
 
-                val buffer = ByteArray(1024 * 4) // 4KB buffer (same as sender)
+                val buffer = ByteArray(1024 * 256) // 256KB buffer (same as sender)
                 var bytesRead: Int
                 var totalBytesRead = 0L
 
-                // Read file data in chunks until the full file length is received
-                while (totalBytesRead < fileLength) {
-                    val bytesToRead = minOf(buffer.size.toLong(), fileLength - totalBytesRead).toInt()
-                    bytesRead = dataInputStream?.read(buffer, 0, bytesToRead) ?: -1
-                    if (bytesRead == -1) break
+                try {
+                    // Read file data in chunks until the full file length is received
+                    while (totalBytesRead < fileLength) {
+                        val bytesToRead =
+                            minOf(buffer.size.toLong(), fileLength - totalBytesRead).toInt()
+                        bytesRead = dataInputStream?.read(buffer, 0, bytesToRead) ?: -1
+                        if (bytesRead == -1) throw IOException("Corrupt file detected, bytesRead == -1")
 
-                    bufferedOutputStream.write(buffer, 0, bytesRead)
-                    totalBytesRead += bytesRead
-                    totalBytesReceived += bytesRead
+                        bufferedOutputStream.write(buffer, 0, bytesRead)
+                        totalBytesRead += bytesRead
+                        totalBytesReceived += bytesRead
 
-                    // Progress calculation
-                    progress = (totalBytesReceived.toFloat() / totalBytesToReceive * 100).toInt()
-                    listener?.onFileReceiveProgress(progress,totalBytesReceived)
-                    Log.d(TAG, "receiveFile: Receiving $fileName - $progress%")
+                        // Progress calculation
+                        progress =
+                            (totalBytesReceived.toFloat() / totalBytesToReceive * 100).toInt()
+                        listener?.onFileReceiveProgress(progress, totalBytesReceived)
+                        Log.d(TAG, "receiveFile: Receiving $fileName - $progress%")
+                    }
+
+                    bufferedOutputStream.flush()
+                    bufferedOutputStream.close()
+
+                    Log.d(
+                        TAG,
+                        "receiveFile: File received successfully: $fileName, Size: $totalBytesRead bytes"
+                    )
+                    listener?.onFileReceiveSuccess()
+                    filesReceived++
+                } catch (e: IOException) {
+                    Log.e(TAG, "receiveFile: Corrupt file detected ($fileName), skipping.")
+                    listener?.onFileReceiveFailure("File $fileName is corrupt and was skipped.")
+                    receivedFile.delete() // Delete the corrupt file
                 }
-
-                bufferedOutputStream.flush()
-                bufferedOutputStream.close()
-
-                Log.d(TAG, "receiveFile: File received: $fileName, Size: $totalBytesRead bytes")
-
-                listener?.onFileReceiveSuccess()
-                filesReceived++
 
                 if (progress == 100) {
                     listener?.onAllFileReceiveSuccess()
@@ -166,17 +186,15 @@ class DataReceiverManger {
                     }
                 }
             } else {
-                Log.e(TAG, "receiveFile: Invalid file name")
+                Log.e(TAG, "receiveFile: Invalid file name, skipping file.")
                 listener?.onFileReceiveFailure("Invalid file name")
             }
         } catch (e: IOException) {
             Log.e(TAG, "receiveFile: IOException: ${e.localizedMessage}")
-            e.printStackTrace()
-            listener?.onFileReceiveFailure("IOException: ${e.message}")
+            listener?.onFileReceiveFailure("IOException: ${e.message}, skipping file.")
         } catch (e: Exception) {
             Log.e(TAG, "receiveFile: Exception: ${e.localizedMessage}")
-            e.printStackTrace()
-            listener?.onFileReceiveFailure("Exception: ${e.message}")
+            listener?.onFileReceiveFailure("Exception: ${e.message}, skipping file.")
         }
     }
 }

@@ -201,20 +201,16 @@ class P2PConnectionManager(private val context: Context) {
             wifiP2pManager.requestDeviceInfo(wifiP2pChannel) { wifiP2pDevice ->
                 if (wifiP2pDevice != null) {
                     callback(wifiP2pDevice.deviceName, wifiP2pDevice.deviceAddress)
+                    Log.d("deviceName", "requestDeviceInfo :wifiP2pDevice.deviceName ${wifiP2pDevice.deviceName}")
                 } else {
                     Log.e(TAG, "Failed to get device info using requestDeviceInfo()")
                 }
             }
+
         } else {
             // For API 28,  // Get Device info using wifiP2pManager that will used to connect peer
-            wifiP2pManager.requestGroupInfo(wifiP2pChannel) { group ->
-                if (group != null && group.isGroupOwner) {
-                    val localDevice = group.owner
-                    callback(localDevice.deviceName, localDevice.deviceAddress)
-                } else {
-                    Log.e(TAG, "Failed to get local device info using requestGroupInfo()")
-                }
-            }
+
+
         }
 
     }
@@ -246,7 +242,7 @@ class P2PConnectionManager(private val context: Context) {
         Log.d("mavi", "Try to connect")
 
         wifiP2pManager.connect(
-       wifiP2pChannel,
+            wifiP2pChannel,
             config,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {

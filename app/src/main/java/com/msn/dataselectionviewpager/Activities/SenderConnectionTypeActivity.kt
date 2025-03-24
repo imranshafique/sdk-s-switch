@@ -15,7 +15,7 @@ class SenderConnectionTypeActivity : AppCompatActivity() {
 
         binding?.apply {
             btnWifi.setOnClickListener {
-                                        startActivity(Intent(this@SenderConnectionTypeActivity, WifiSenderActivity::class.java))
+                startActivity(Intent(this@SenderConnectionTypeActivity, WifiSenderActivity::class.java))
             }
             btnQrCode.setOnClickListener {
 

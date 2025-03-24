@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
@@ -22,28 +23,31 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         super.onCreate(savedInstanceState)
         binding= ActivityReceiverBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         dataReceiverManager = DataReceiverManger()
         dataReceiverManager.setListener(this)
-        dataReceiverManager.startReceive()
+        dataReceiverManager.startReceive(this)
         binding.btnDisconnect.setOnClickListener {
             finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         }
-       onBackPressedDispatcher.addCallback(
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    finish()
-                    startActivity(Intent(this@DataReceiveActivity, DashboardActivity::class.java).apply {
-                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    })
-                }
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+                startActivity(Intent(this@DataReceiveActivity, DashboardActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
             }
-        )
+        })
 
     }
-
+    override fun onDestroy() {
+        super.onDestroy()
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+    }
     override fun onFileReceiveSuccess() {
         runOnUiThread {  }
         Log.d(TAG, "onFileReceiveSuccess: ")
@@ -53,7 +57,7 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
         runOnUiThread {
             Log.d(TAG, "onAllFileReceiveSuccess: ")
             binding.btnDisconnect.visibility = View.VISIBLE
-            
+
         }
 
     }
@@ -61,7 +65,7 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
     override fun onFileReceiveFailure(errorMessage: String) {
         runOnUiThread {
             Log.d(TAG, "onFileReceiveFailure:  $errorMessage ")
-            
+
         }
     }
 
@@ -82,7 +86,7 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
             binding.tvPercentage.text = progress.toString() +"%"
             binding.tvReceivedBytes.text = formatSize(totalBytesReceived)
         }
-       
+
     }
 
     override fun onTotalCountReceived(count: Int, size: Long) {
