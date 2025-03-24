@@ -32,7 +32,8 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_waiting_sender_screen)
+        binding=ActivityWaitingSenderScreenBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         binding.deviceListRecyclerView.layoutManager = LinearLayoutManager(this)
         binding.deviceListRecyclerView.adapter = deviceListAdapter
         p2pConnectionManager = P2PConnectionManager(this)

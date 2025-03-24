@@ -1,7 +1,6 @@
 package com.msn.dataselectionviewpager.Adapter.FolderAdapters
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,12 +10,15 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
- import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
+import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import java.io.File
-import androidx.core.content.FileProvider
 
-class ImagesFolderAdapter(private val context: Context, private val onItemClick: (FolderWithImageCount) -> Unit) :
-    RecyclerView.Adapter<ImagesFolderAdapter.FolderViewHolder>() {
+class ImagesFolderAdapter(
+    private val context: Context,
+    private val onItemClick: (FolderWithImageCount) -> Unit
+) : RecyclerView.Adapter<ImagesFolderAdapter.FolderViewHolder>()
+{
 
     private var folders = listOf<FolderWithImageCount>()
 
@@ -34,22 +36,22 @@ class ImagesFolderAdapter(private val context: Context, private val onItemClick:
                 folderThumbnailImageView.setImageResource(R.drawable.ic_launcher_background) // Default image
             }
 
-            // Convert File to Uri
-            val folderUri = convertFileToUri(folderWithImageCount.folder)
-            val path = folderWithImageCount.folder.path
-            Log.d("paths", "bind: folderUri: $folderUri")
-            Log.d("paths", "bind: path: $path")
+            val folderPath = folderWithImageCount.folder.path
+            Log.d("paths", "bind: folderPath: $folderPath")
 
-            // Set checkbox state based on whether the folder URI is in the selected list
+            // Check if all paths in the folder are already selected
+            val allPaths = getAllFilePaths(folderWithImageCount.folder)
+            checkBox.isChecked = allPaths.all { selectedPath.contains(it) }
 
-            // Handle checkbox click to add/remove URI from selected list
             checkBox.setOnCheckedChangeListener { _, isChecked ->
                 if (isChecked) {
-                     Log.d("Selected URIs", "Added URI: ${folders}")
-                    Log.d("Selected URIs", "Added Path: ${path}")
+                    selectedPath.addAll(allPaths)
+                    Log.d("Selected URIs", "Added Paths: $allPaths")
                 } else {
-                     Log.d("Selected URIs", "Removed URI: $folderUri")
+                    selectedPath.removeAll(allPaths)
+                    Log.d("Selected URIs", "Removed Paths: $allPaths")
                 }
+                Log.d("Selected Path List", "Current selectedPath: $selectedPath")
             }
 
             itemView.setOnClickListener {
@@ -57,13 +59,10 @@ class ImagesFolderAdapter(private val context: Context, private val onItemClick:
             }
         }
 
-        // Helper function to convert File to Uri using FileProvider
-        private fun convertFileToUri(file: File): Uri {
-            return FileProvider.getUriForFile(
-                context,
-                "com.msn.dataselectionviewpager.fileprovider", // Replace with your actual file provider authorities
-                file
-            )
+        // Helper function to get all file paths in the folder
+        private fun getAllFilePaths(folder: File): List<String> {
+            val files = folder.listFiles()
+            return files?.filter { it.isFile }?.map { it.absolutePath } ?: emptyList()
         }
     }
 
