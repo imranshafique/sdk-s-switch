@@ -13,8 +13,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.Fragments.ContactFragment
 import com.msn.dataselectionviewpager.R
- import com.msn.dataselectionviewpager.dataClass.Contact
-import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.dataClass.Contact
 import java.io.File
 import java.io.FileWriter
 import java.io.IOException

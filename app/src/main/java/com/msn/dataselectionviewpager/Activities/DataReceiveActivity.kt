@@ -4,8 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.databinding.ActivityReceiverBinding
 import com.msn.smartswitch.Models.Utilities
@@ -25,12 +27,21 @@ class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverList
 
         dataReceiverManager = DataReceiverManger()
         dataReceiverManager.setListener(this)
-        dataReceiverManager.startReceive()
+        dataReceiverManager.startReceive(this)
         binding.btnDisconnect.setOnClickListener {
+            finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
         }
+        onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                finish()
+                startActivity(Intent(this@DataReceiveActivity, DashboardActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+            }
+        })
 
     }
     override fun onDestroy() {

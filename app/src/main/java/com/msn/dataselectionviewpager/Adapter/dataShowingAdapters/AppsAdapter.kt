@@ -13,8 +13,8 @@ import com.msn.dataselectionviewpager.R
 
 import android.content.Context
 import android.widget.ImageView
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.dataClass.AppInfo
-import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 
 class AppsAdapter(

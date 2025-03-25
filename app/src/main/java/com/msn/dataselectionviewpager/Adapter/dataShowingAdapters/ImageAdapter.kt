@@ -1,7 +1,7 @@
 package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters
 
-
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,6 +15,8 @@ import com.bumptech.glide.Glide
 import com.msn.dataselectionviewpager.R
 import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
+
+
 
 
 class ImageAdapter(private val context: Context) : RecyclerView.Adapter<ImageAdapter.ImageViewHolder>() {

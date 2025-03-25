@@ -8,8 +8,10 @@ import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.RequestManager
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.ViewModel.MediaViewModel
 import com.msn.dataselectionviewpager.databinding.FragmentVideosBinding
@@ -17,12 +19,17 @@ import com.msn.dataselectionviewpager.databinding.FragmentVideosBinding
 import com.msn.dataselectionviewpager.Adapter.dataShowingAdapters.VideoAdapter
 import com.msn.dataselectionviewpager.Adapter.FolderAdapters.VideosFolderAdapter
 import com.msn.dataselectionviewpager.Utils.PermissionHelper
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class VideosFragment : Fragment(R.layout.fragment_videos) {
 
     private lateinit var viewModel: MediaViewModel
     private var _binding: FragmentVideosBinding? = null
     private val binding get() = _binding!!
+    @Inject
+    lateinit var glide: RequestManager // Inject Glide
     private lateinit var permissionHelper: PermissionHelper
     private val requestStoragePermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
@@ -54,7 +61,7 @@ class VideosFragment : Fragment(R.layout.fragment_videos) {
         }
         val videoAdapter = VideoAdapter(requireContext())
 
-        val videosFolderAdapter = VideosFolderAdapter(requireContext()) { folderWithVideoCount ->
+        val videosFolderAdapter = VideosFolderAdapter(lifecycleScope, glide) { folderWithVideoCount ->
             binding.videosRecyclerView.visibility = View.GONE
             binding.recyclerViewVideos.visibility = View.VISIBLE
 

@@ -5,12 +5,13 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Button
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import com.msn.dataselectionviewpager.DashboardActivity
 import com.msn.dataselectionviewpager.R
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.databinding.ActivitySendMultiFilesBinding
- import com.msn.smartswitch.Models.AppConstant.selectedPath
 import com.msn.smartswitch.Models.Utilities
 import com.msn.smartswitch.Models.Utilities.Companion.formatSize
 import com.msn.smartswitch.SenderConnectionClasses.FileTransferSDK
@@ -20,14 +21,9 @@ import java.io.File
 @AndroidEntryPoint
 class DataTransferActivity : AppCompatActivity() {
     lateinit var binding: ActivitySendMultiFilesBinding
-
-
     // SDK instance
     private lateinit var fileTransferSDK: FileTransferSDK
-
     private val TAG = javaClass.simpleName
-    private lateinit var sendButton: Button
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,20 +37,29 @@ class DataTransferActivity : AppCompatActivity() {
             activity = this
         )
         var totalFilesSizes: Long = 0L // Ensure total size is a Long
-
         totalFilesSizes = getTotalSizeInBytes(selectedPath)
-
-        binding.tvTotalFilesSizes.text = getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)
+        binding.tvTotalFilesSizes.text = resources?.getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)
         binding.tvTotalFiles.text = "${resources?.getString(R.string.totalFiles)} ${selectedPath.size}"
 
 
-        fileTransferSDK.sendFiles()
+        fileTransferSDK.sendFiles(selectedPath,this)
 
         binding.btnDisconnect.setOnClickListener {
+            finish()
             startActivity(Intent(this, DashboardActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             })
-         }
+        }
+        onBackPressedDispatcher.addCallback(
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    finish()
+                    startActivity(Intent(this@DataTransferActivity, DashboardActivity::class.java).apply {
+                        flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    })
+                }
+            }
+        )
         // Set up the listener for file transfer progress
         fileTransferSDK.setListener(object : FileTransferSDK.FileTransferListener {
             override fun onFileSendSuccess(progress: Int, totalBytesSent: Long) {

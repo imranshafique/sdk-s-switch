@@ -13,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
 
 import androidx.core.content.FileProvider
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.dataClass.AudioModel
-import com.msn.smartswitch.Models.AppConstant.selectedPath
 import java.io.File
 
 class AudioAdapter(private val context: Context) : RecyclerView.Adapter<AudioAdapter.AudioViewHolder>() {

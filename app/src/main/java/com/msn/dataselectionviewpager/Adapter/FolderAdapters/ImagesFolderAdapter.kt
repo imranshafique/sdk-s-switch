@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
 import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import java.io.File
+import androidx.core.content.FileProvider
 
 class ImagesFolderAdapter(
     private val context: Context,
@@ -39,20 +42,20 @@ class ImagesFolderAdapter(
             val folderPath = folderWithImageCount.folder.path
             Log.d("paths", "bind: folderPath: $folderPath")
 
-                // Check if all paths in the folder are already selected
-                val allPaths = getAllFilePaths(folderWithImageCount.folder)
-                checkBox.isChecked = allPaths.all { selectedPath.contains(it) }
+            // Check if all paths in the folder are already selected
+            val allPaths = getAllFilePaths(folderWithImageCount.folder)
+            checkBox.isChecked = allPaths.all { selectedPath.contains(it) }
 
-                checkBox.setOnCheckedChangeListener { _, isChecked ->
-                    if (isChecked) {
-                        selectedPath.addAll(allPaths)
-                        Log.d("Selected URIs", "Added Paths: $allPaths")
-                    } else {
-                        selectedPath.removeAll(allPaths)
-                        Log.d("Selected URIs", "Removed Paths: $allPaths")
-                    }
-                    Log.d("Selected Path List", "Current selectedPath: $selectedPath")
+            checkBox.setOnCheckedChangeListener { _, isChecked ->
+                if (isChecked) {
+                    selectedPath.addAll(allPaths)
+                    Log.d("Selected URIs", "Added Paths: $allPaths")
+                } else {
+                    selectedPath.removeAll(allPaths)
+                    Log.d("Selected URIs", "Removed Paths: $allPaths")
                 }
+                Log.d("Selected Path List", "Current selectedPath: $selectedPath")
+            }
 
             itemView.setOnClickListener {
                 onItemClick(folderWithImageCount)

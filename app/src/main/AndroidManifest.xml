@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" />
+    <uses-permission android:name="android.permission.CAMERA" />
 
     <supports-screens
         android:anyDensity="true"
@@ -18,6 +19,7 @@
         android:resizeable="false"
         android:smallScreens="true"
         android:xlargeScreens="true" />
+
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="com.motorola.motocare.INTENT_TRIGGER" />
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
@@ -45,6 +47,9 @@
     <uses-feature
         android:name="android.hardware.wifi.direct"
         android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
 
     <application
         android:name=".ApplicationClass.MyApplication"
@@ -60,6 +65,18 @@
         tools:replace="android:name"
         tools:targetApi="31">
         <activity
+            android:name=".Activities.ReceiverConnectioTypeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.SenderConnectionTypeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.QrCodeScannerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activities.QrCodeGeneratorActivity"
+            android:exported="false" />
+        <activity
             android:name=".DashboardActivity"
             android:exported="true">
             <intent-filter>
@@ -68,9 +85,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".Activities.DashboardActivity"
-            android:exported="false" />
         <activity
             android:name=".Activities.DataReceiveActivity"
             android:exported="false" />
@@ -85,7 +99,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
