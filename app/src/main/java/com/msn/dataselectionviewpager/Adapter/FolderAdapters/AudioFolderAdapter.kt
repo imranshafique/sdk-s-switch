@@ -29,7 +29,6 @@ class AudioFolderAdapter(private val context: Context, private val onItemClick: 
             folderNameTextView.text = folderWithAudioCount.folder.name + "(${folderWithAudioCount.audioCount})"
             // Set a placeholder or icon for audio folders (no thumbnail logic for audio)
             folderThumbnailImageView.setImageResource(R.drawable.ic_launcher_background)
-
             // Convert File to Uri
             val folderUri = convertFileToUri(folderWithAudioCount.folder)
             val paths = folderWithAudioCount.folder.path
