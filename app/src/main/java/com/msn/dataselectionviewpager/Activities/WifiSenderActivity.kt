@@ -43,7 +43,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
             p2pConnectionManager.disconnectWifiDirectIfConnected()
             p2pConnectionManager.startDiscovery()
         }else{
-            Toast.makeText(this@WifiSenderActivity,"SomeThing went Wrong check internet and gps",Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@WifiSenderActivity,resources?.getString(R.string.something_went_wrong_check_internet_and_gps),Toast.LENGTH_SHORT).show()
             finish()
         }
         binding.refresh.setOnClickListener {
@@ -52,7 +52,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
                 p2pConnectionManager.disconnectWifiDirectIfConnected()
                 p2pConnectionManager.startDiscovery()
             }else{
-                Toast.makeText(this@WifiSenderActivity, "SomeThing went Wrong check internet and gps ",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@WifiSenderActivity, resources?.getString(R.string.something_went_wrong_check_internet_and_gps),Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -60,7 +60,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onClientConnected() {
         runOnUiThread {
-            Toast.makeText(this, "Connected as Client!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, resources?.getString(R.string.connected_as_client), Toast.LENGTH_SHORT).show()
             Log.d(TAG, "Client successfully connected")
             startActivity(Intent(this, DataTransferActivity::class.java))
         }
@@ -68,7 +68,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onGroupOwnerConnected() {
         runOnUiThread {
-            Toast.makeText(this, "Connected as Group Owner!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, resources?.getString(R.string.connected_as_group_owner), Toast.LENGTH_SHORT).show()
             Log.d(TAG, "Group Owner successfully connected")
             startActivity(Intent(this, DataTransferActivity::class.java))
         }
@@ -77,7 +77,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onDiscoveryStarted() {
         runOnUiThread {
-            Toast.makeText(this, "Discovery Started", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, resources?.getString(R.string.discovery_started), Toast.LENGTH_SHORT).show()
         }
         Log.d(TAG, "Discovery has started")
     }
@@ -92,7 +92,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onManualConnectionSuccess() {
         runOnUiThread {
-            Toast.makeText(this, "Connected successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, resources?.getString(R.string.connected_successfully), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -119,7 +119,8 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
 
 
         Log.d("ConnectionAttempt", "Attempting connection to device: ${device.deviceName} - ${device.deviceAddress}")
-        Toast.makeText(this, "Connecting to ${device.deviceName}...", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this,
+            getString(R.string.connecting_to, device.deviceName), Toast.LENGTH_SHORT).show()
 
         val config = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
@@ -130,13 +131,14 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
             config,
             object : WifiP2pManager.ActionListener {
                 override fun onSuccess() {
-                    Log.d("ConnectionStatus", "Connection successful to device: ${device.deviceName}")
-                    Toast.makeText(this@WifiSenderActivity, "Connected to ${device.deviceName}!", Toast.LENGTH_SHORT).show()
+                    Log.d("ConnectionStatus",
+                        getString(R.string.connection_successful_to_device, device.deviceName))
+                    Toast.makeText(this@WifiSenderActivity, getString(R.string.connecting_to, device.deviceName), Toast.LENGTH_SHORT).show()
                 }
 
                 override fun onFailure(reason: Int) {
                     Log.e("ConnectionStatus", "Connection failed with reason: $reason")
-                    Toast.makeText(this@WifiSenderActivity, "Connection failed: $reason", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@WifiSenderActivity, getString(R.string.connecting_to, device.deviceName), Toast.LENGTH_SHORT).show()
                     finish()
                 }
             }

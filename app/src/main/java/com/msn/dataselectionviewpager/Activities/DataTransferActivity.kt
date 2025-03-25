@@ -38,7 +38,7 @@ class DataTransferActivity : AppCompatActivity() {
         )
         var totalFilesSizes: Long = 0L // Ensure total size is a Long
         totalFilesSizes = getTotalSizeInBytes(selectedPath)
-        binding.tvTotalFilesSizes.text = getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)
+        binding.tvTotalFilesSizes.text = resources?.getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)
         binding.tvTotalFiles.text = "${resources?.getString(R.string.totalFiles)} ${selectedPath.size}"
 
 

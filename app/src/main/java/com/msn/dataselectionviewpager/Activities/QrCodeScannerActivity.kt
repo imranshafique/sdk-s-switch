@@ -148,33 +148,6 @@ class QrCodeScannerActivity : AppCompatActivity(), P2PConnectionListener {
     override fun onDiscoveryStarted() {
         Log.d(TAG, "Discovery started")
     }
-//    override fun onPeersAvailable(peers: List<WifiP2pDevice>) {
-//        Log.d(TAG, "Available peers: $peers")
-//        Log.d(TAG, "Available scannedDeviceName: $scannedDeviceName")
-//
-//        if (isConnecting) {
-//            Log.d(TAG, "Already attempting to connect. Skipping redundant calls.")
-//            return
-//        }
-//
-//        val deviceName = scannedDeviceName ?: return
-//        val targetDevice = peers.find { it.deviceName == deviceName } ?: run {
-//            Log.d(TAG, "Scanned device not found in available peers. Retrying discovery...")
-//            p2pConnectionManager.startDiscovery()
-//            return
-//        }
-//        Log.d(TAG, "Found scanned device: ${targetDevice.deviceName} - ${targetDevice.deviceAddress}")
-//        isConnecting = true
-//        p2pConnectionManager.proceedToConnect(targetDevice,
-//            onSuccess = {
-//                Log.d(TAG, "Connection established successfully!")
-//            },
-//            onFailure = {
-//                isConnecting = false // Reset flag on failure
-//                Log.e(TAG, "Failed to connect. Reason: $it")
-//            }
-//        )
-//    }
 
     override fun onPeersAvailable(peers: List<WifiP2pDevice>) {
         Log.d("peers", "Available peers: $peers")

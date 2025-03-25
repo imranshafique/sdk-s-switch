@@ -45,7 +45,8 @@ class DashboardActivity : AppCompatActivity() {
                     startActivity(Intent(this@DashboardActivity, MainActivity::class.java))
 
                 }else{
-                    Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DashboardActivity,
+                        getString(R.string.permission_not_granted_go_to_settings), Toast.LENGTH_SHORT).show()
 
                 }
             }
@@ -55,7 +56,7 @@ class DashboardActivity : AppCompatActivity() {
                     startActivity(Intent(this@DashboardActivity, ReceiverConnectioTypeActivity::class.java))
 
                 }else{
-                    Toast.makeText(this@DashboardActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@DashboardActivity,getString(R.string.permission_not_granted_go_to_settings), Toast.LENGTH_SHORT).show()
                 }
 
             }

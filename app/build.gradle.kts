@@ -127,6 +127,7 @@ dependencies {
 
     // ML kit barcode reader
     implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
 
 }
 kapt {

@@ -51,8 +51,6 @@ class DocumentsFolderAdapter(
             Log.d("DocumentsFolderAdapter", "Generated URI: $folderUri")
         }
 
-        // Ensure the checkbox reflects selection state
-
         // Handle checkbox click to add/remove URI from selected list
         holder.checkBox.setOnCheckedChangeListener { _, isChecked ->
             if (folderUri != null) {

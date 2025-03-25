@@ -1,7 +1,6 @@
 package com.msn.dataselectionviewpager.Adapter.FolderAdapters
 
 import android.content.Context
-import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,53 +9,69 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.msn.dataselectionviewpager.R
-import com.msn.dataselectionviewpager.dataClass.FolderWithVideoCount
-import java.io.File
-import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
+import com.bumptech.glide.RequestManager
+import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.dataClass.FolderWithVideoCount
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import java.io.File
+import javax.inject.Inject
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
+
+@AndroidEntryPoint
 class VideosFolderAdapter(
     private val context: Context,
+    private val coroutineScope: CoroutineScope, // Pass CoroutineScope from Fragment/Activity
     private val onItemClick: (FolderWithVideoCount) -> Unit
 ) : RecyclerView.Adapter<VideosFolderAdapter.FolderViewHolder>() {
 
     private var folders = listOf<FolderWithVideoCount>()
 
+    @Inject
+    lateinit var glide: RequestManager
+
+    private val selectedPaths = mutableSetOf<String>() // Store selected paths
+
     inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val folderNameTextView: TextView = itemView.findViewById(R.id.folderName)
-        val folderThumbnailImageView: ImageView = itemView.findViewById(R.id.folderIcon)
-        val checkBox: CheckBox = itemView.findViewById(R.id.folderCheckBox)
+        private val folderNameTextView: TextView = itemView.findViewById(R.id.folderName)
+        private val folderThumbnailImageView: ImageView = itemView.findViewById(R.id.folderIcon)
+        private val checkBox: CheckBox = itemView.findViewById(R.id.folderCheckBox)
 
         fun bind(folderWithVideoCount: FolderWithVideoCount) {
-            folderNameTextView.text = "${folderWithVideoCount.folder.name} (${folderWithVideoCount.videoCount})"
+            val folder = folderWithVideoCount.folder
+            folderNameTextView.text = "${folder.name} (${folderWithVideoCount.videoCount})"
 
-            if (folderWithVideoCount.thumbnail != null) {
-                Glide.with(context)
-                    .load(folderWithVideoCount.thumbnail)
-                    .placeholder(R.drawable.ic_launcher_background)
-                    .into(folderThumbnailImageView)
-            } else {
-                folderThumbnailImageView.setImageResource(R.drawable.ic_launcher_background)
-            }
+            // Load thumbnail
+            glide.load(folderWithVideoCount.thumbnail)
+                .placeholder(R.drawable.ic_launcher_background)
+                .into(folderThumbnailImageView)
 
-            val folderPath = folderWithVideoCount.folder.path
+            val folderPath = folder.path
             Log.d("paths", "bind: folderPath: $folderPath")
 
-            // Get all video paths in the folder
-            val allPaths = getAllFilePaths(folderWithVideoCount.folder)
-            checkBox.isChecked = allPaths.all { selectedPath.contains(it) }
+            // Get all video paths asynchronously
+            coroutineScope.launch {
+                val allPaths = getAllFilePaths(folder)
+                withContext(Dispatchers.Main) {
+                    checkBox.isChecked = allPaths.all { selectedPaths.contains(it) }
 
-            checkBox.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    selectedPath.addAll(allPaths)
-                    Log.d("Selected URIs", "Added Paths: $allPaths")
-                } else {
-                    selectedPath.removeAll(allPaths)
-                    Log.d("Selected URIs", "Removed Paths: $allPaths")
+                    checkBox.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            selectedPaths.addAll(allPaths)
+                            Log.d("Selected URIs", "Added Paths: $allPaths")
+                        } else {
+                            selectedPaths.removeAll(allPaths)
+                            Log.d("Selected URIs", "Removed Paths: $allPaths")
+                        }
+                        Log.d("Selected Path List", "Current selectedPaths: $selectedPaths")
+                    }
                 }
-                Log.d("Selected Path List", "Current selectedPath: $selectedPath")
             }
 
             itemView.setOnClickListener {
@@ -64,10 +79,10 @@ class VideosFolderAdapter(
             }
         }
 
-        // Helper function to get all video file paths in the folder
-        private fun getAllFilePaths(folder: File): List<String> {
-            val files = folder.listFiles()
-            return files?.filter { it.isFile }?.map { it.absolutePath } ?: emptyList()
+        private suspend fun getAllFilePaths(folder: File): List<String> {
+            return withContext(Dispatchers.IO) {
+                folder.listFiles()?.filter { it.isFile }?.map { it.absolutePath } ?: emptyList()
+            }
         }
     }
 
@@ -77,16 +92,13 @@ class VideosFolderAdapter(
     }
 
     override fun onBindViewHolder(holder: FolderViewHolder, position: Int) {
-        val folderWithVideoCount = folders[position]
-        holder.bind(folderWithVideoCount)
+        holder.bind(folders[position])
     }
 
-    override fun getItemCount(): Int {
-        return folders.size
-    }
+    override fun getItemCount(): Int = folders.size
 
-    fun submitList(folders: List<FolderWithVideoCount>) {
-        this.folders = folders
+    fun submitList(newFolders: List<FolderWithVideoCount>) {
+        folders = newFolders
         notifyDataSetChanged()
     }
 }

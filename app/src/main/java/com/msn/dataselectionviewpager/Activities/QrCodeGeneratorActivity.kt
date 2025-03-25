@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import com.msn.dataselectionviewpager.R
 import com.msn.dataselectionviewpager.Utils.AppUtils
 import com.msn.dataselectionviewpager.databinding.ActivityQrCodeGeneratorBinding
 import com.msn.smartswitch.SenderConnectionClasses.P2PConnectionListener
@@ -33,7 +34,8 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
         if (AppUtils.isInternetAvailable(this)) {
             p2pConnectionManager.disconnectWifiDirectIfConnected()
         } else {
-            Toast.makeText(this@QrCodeGeneratorActivity, "Something went wrong. Check internet and GPS.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@QrCodeGeneratorActivity,
+                getString(R.string.something_went_wrong_check_internet_and_gps), Toast.LENGTH_SHORT).show()
             finish()
         }
         // Generate QR Code
@@ -51,7 +53,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onClientConnected() {
         runOnUiThread {
-            Toast.makeText(this, "Connected as Client!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.connected_as_client), Toast.LENGTH_SHORT).show()
             Log.d(TAG, "Client successfully connected")
             startActivity(Intent(this, DataTransferActivity::class.java))
         }
@@ -59,7 +61,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onGroupOwnerConnected() {
         runOnUiThread {
-            Toast.makeText(this, "Connected as Group Owner!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.connected_as_group_owner), Toast.LENGTH_SHORT).show()
             Log.d(TAG, "Group Owner successfully connected")
             startActivity(Intent(this, DataTransferActivity::class.java))
         }
@@ -67,7 +69,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onDiscoveryStarted() {
         runOnUiThread {
-            Toast.makeText(this, "Discovery Started", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.discovery_started), Toast.LENGTH_SHORT).show()
         }
         Log.d(TAG, "Discovery has started")
     }
@@ -78,7 +80,7 @@ class QrCodeGeneratorActivity : AppCompatActivity(), P2PConnectionListener {
 
     override fun onManualConnectionSuccess() {
         runOnUiThread {
-            Toast.makeText(this, "Connected successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.connected_successfully), Toast.LENGTH_SHORT).show()
         }
     }
 
