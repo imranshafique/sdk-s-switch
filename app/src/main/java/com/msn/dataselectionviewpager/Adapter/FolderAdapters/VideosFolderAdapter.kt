@@ -1,6 +1,5 @@
 package com.msn.dataselectionviewpager.Adapter.FolderAdapters
 
-import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -9,33 +8,23 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.msn.dataselectionviewpager.R
-import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.dataClass.FolderWithVideoCount
-import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
-import javax.inject.Inject
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
 
 
-@AndroidEntryPoint
 class VideosFolderAdapter(
-    private val context: Context,
     private val coroutineScope: CoroutineScope, // Pass CoroutineScope from Fragment/Activity
+    private val glide: RequestManager, // Injected Glide instance from Fragment/Activity
     private val onItemClick: (FolderWithVideoCount) -> Unit
 ) : RecyclerView.Adapter<VideosFolderAdapter.FolderViewHolder>() {
 
     private var folders = listOf<FolderWithVideoCount>()
-
-    @Inject
-    lateinit var glide: RequestManager
-
     private val selectedPaths = mutableSetOf<String>() // Store selected paths
 
     inner class FolderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -102,3 +91,4 @@ class VideosFolderAdapter(
         notifyDataSetChanged()
     }
 }
+

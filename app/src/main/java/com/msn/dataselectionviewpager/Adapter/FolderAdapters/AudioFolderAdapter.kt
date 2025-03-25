@@ -53,13 +53,24 @@ class AudioFolderAdapter(private val context: Context, private val onItemClick: 
         }
 
         // Helper function to convert File to Uri using FileProvider
-        private fun convertFileToUri(file: File): Uri {
-            return FileProvider.getUriForFile(
-                context,
-                "com.msn.dataselectionviewpager.fileprovider", // Replace with your actual file provider authorities
-                file
-            )
+        private fun convertFileToUri(file: File): Uri? {
+            if (!file.exists()) {
+                Log.e("FileError", "File does not exist: ${file.path}")
+                return null
+            }
+            return try {
+                FileProvider.getUriForFile(
+                    context,
+                    "com.msn.dataselectionviewpager.fileprovider", // Replace with your actual file provider authorities
+                    file
+                )
+            } catch (e: Exception) {
+
+                Log.e("FileError", "Error converting file to URI: ${e.message}")
+                null
+            }
         }
+
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FolderViewHolder {

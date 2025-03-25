@@ -24,7 +24,9 @@ import com.msn.dataselectionviewpager.Activities.WifiSenderActivity
 import com.msn.dataselectionviewpager.Adapter.ViewPagerAdapter.FragmentAdapter
 import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import com.msn.dataselectionviewpager.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
      private lateinit var adapter: FragmentAdapter
