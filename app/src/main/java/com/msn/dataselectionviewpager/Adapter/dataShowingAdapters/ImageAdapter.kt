@@ -13,7 +13,7 @@ import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.msn.dataselectionviewpager.R
-import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import java.io.File
 
 

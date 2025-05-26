@@ -15,7 +15,7 @@ import com.msn.smartswitch.Models.Utilities.Companion.formatSize
 import com.msn.smartswitch.Transfer.DataReceiverManger
 
 class DataReceiveActivity : AppCompatActivity(), DataReceiverManger.ReceiverListener {
-    private lateinit var dataReceiverManager: DataReceiverManger
+        private lateinit var dataReceiverManager: DataReceiverManger
     private lateinit var binding: ActivityReceiverBinding
     private val TAG = javaClass.simpleName
 

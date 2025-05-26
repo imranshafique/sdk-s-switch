@@ -73,9 +73,11 @@ class FileTransferSDK(
         }
     }
 
+
     private fun getTotalSizeInBytes(filePaths: ArrayList<String>): Long {
         var totalSize = 0L
-        for (path in filePaths) {
+        val pathsCopy = ArrayList(filePaths) // Create a copy
+        for (path in pathsCopy) {
             val file = File(path)
             if (file.exists()) {
                 totalSize += file.length()
@@ -83,6 +85,7 @@ class FileTransferSDK(
         }
         return totalSize
     }
+
     private fun sendData(file: File, dataOutputStream: DataOutputStream, socket: Socket) {
         try {
             if (!socket.isClosed) {

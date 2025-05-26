@@ -10,12 +10,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
-import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
-import com.msn.smartswitch.Models.AppConstant.selectedPath
-import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
 import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
 import java.io.File
-import androidx.core.content.FileProvider
 
 class ImagesFolderAdapter(
     private val context: Context,

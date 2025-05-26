@@ -17,7 +17,7 @@ import com.msn.dataselectionviewpager.R
  import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.msn.smartswitch.Models.AppConstant.selectedPath
+import com.msn.dataselectionviewpager.Utils.AppConstant.selectedPath
 import java.io.File
 
 

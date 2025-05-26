@@ -8,6 +8,8 @@ import android.net.wifi.p2p.WifiP2pDevice
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+
+
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
@@ -17,7 +19,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.common.InputImage
-
 import com.msn.dataselectionviewpager.Utils.AppUtils
 import com.msn.dataselectionviewpager.Utils.AppUtils.isLocationEnabled
 import com.msn.dataselectionviewpager.databinding.ActivityQrCodeScannerBinding
