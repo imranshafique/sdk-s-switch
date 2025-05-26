@@ -28,11 +28,35 @@ class P2PConnectionManager(private val context: Context) {
     private val QR_CODE_SIZE = 200
     private var listener: P2PConnectionListener? = null
     private val TAG = "mavi"
-    val wifiP2pManager: WifiP2pManager by lazy {
-        context.getSystemService(Context.WIFI_P2P_SERVICE) as WifiP2pManager
+
+    private val wifiP2pManager: WifiP2pManager? by lazy {
+        try {
+            // Check if WiFi Direct is supported first
+            if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT)) {
+                Log.w(TAG, "WiFi Direct is not supported on this device")
+                return@lazy null
+            }
+
+            val service = context.getSystemService(Context.WIFI_P2P_SERVICE)
+            if (service != null) {
+                service as? WifiP2pManager
+            } else {
+                Log.w(TAG, "WiFi P2P service is not available")
+                null
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to initialize WiFi P2P Manager", e)
+            null
+        }
     }
-    val wifiP2pChannel: WifiP2pManager.Channel by lazy {
-        wifiP2pManager.initialize(context, context.mainLooper, null)
+
+    private val wifiP2pChannel: WifiP2pManager.Channel? by lazy {
+        try {
+            wifiP2pManager?.initialize(context, context.mainLooper, null)
+        } catch (e: Exception) {
+            Log.e(TAG, "Failed to initialize WiFi P2P Channel", e)
+            null
+        }
     }
     private var broadcastReceiver: BroadcastReceiver? = null
     private var isClientStarted = false
@@ -46,7 +70,7 @@ class P2PConnectionManager(private val context: Context) {
             override fun onReceive(context: Context, intent: Intent) {
                 when (intent.action) {
                     WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
-                        wifiP2pManager.requestPeers(wifiP2pChannel) { peerList ->
+                        wifiP2pManager?.requestPeers(wifiP2pChannel) { peerList ->
 
                             Log.d(TAG, "peerList ${peerList.deviceList.toString()}")
 
@@ -59,7 +83,7 @@ class P2PConnectionManager(private val context: Context) {
                             TAG,
                             "onReceive: WIFI_P2P_CONNECTION_CHANGED_ACTION wifiP2pChannel: $wifiP2pChannel"
                         )
-                        wifiP2pManager.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
+                        wifiP2pManager?.requestConnectionInfo(wifiP2pChannel) { wifiP2pInfo ->
                             Log.d(
                                 TAG,
                                 "onReceive Connection changed: ${wifiP2pInfo.groupOwnerAddress}"
@@ -127,13 +151,13 @@ class P2PConnectionManager(private val context: Context) {
     }
 
     fun disconnectWifiDirectIfConnected() {
-        wifiP2pManager.requestGroupInfo(
+        wifiP2pManager?.requestGroupInfo(
             wifiP2pChannel
         )
         { group ->
             Log.d(TAG, "disconnectWifiDirectIfConnected: ")
             if (group != null && wifiP2pManager != null && wifiP2pChannel != null) {
-                wifiP2pManager.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+                wifiP2pManager?.removeGroup(wifiP2pChannel, object : WifiP2pManager.ActionListener {
                     override fun onSuccess() {
                         Log.d(TAG, "onSuccess: wifiDisConnected")
                         startDiscovery()
@@ -149,7 +173,7 @@ class P2PConnectionManager(private val context: Context) {
     fun startDiscovery() {
         isServerStarted = false
         isClientStarted = false
-        wifiP2pManager.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
+        wifiP2pManager?.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
             override fun onSuccess() {
                 Log.d(TAG, "startDiscovery onSuccess: ")
                 listener?.onDiscoveryStarted()
@@ -198,12 +222,14 @@ class P2PConnectionManager(private val context: Context) {
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             // For API 29 and above, use requestDeviceInfo()
-            wifiP2pManager.requestDeviceInfo(wifiP2pChannel) { wifiP2pDevice ->
-                if (wifiP2pDevice != null) {
-                    callback(wifiP2pDevice.deviceName, wifiP2pDevice.deviceAddress)
-                    Log.d("deviceName", "requestDeviceInfo :wifiP2pDevice.deviceName ${wifiP2pDevice.deviceName}")
-                } else {
-                    Log.e(TAG, "Failed to get device info using requestDeviceInfo()")
+            wifiP2pChannel?.let {
+                wifiP2pManager?.requestDeviceInfo(it) { wifiP2pDevice ->
+                    if (wifiP2pDevice != null) {
+                        callback(wifiP2pDevice.deviceName, wifiP2pDevice.deviceAddress)
+                        Log.d("deviceName", "requestDeviceInfo :wifiP2pDevice.deviceName ${wifiP2pDevice.deviceName}")
+                    } else {
+                        Log.e(TAG, "Failed to get device info using requestDeviceInfo()")
+                    }
                 }
             }
 
@@ -241,7 +267,7 @@ class P2PConnectionManager(private val context: Context) {
 
         Log.d("mavi", "Try to connect")
 
-        wifiP2pManager.connect(
+        wifiP2pManager?.connect(
             wifiP2pChannel,
             config,
             object : WifiP2pManager.ActionListener {
