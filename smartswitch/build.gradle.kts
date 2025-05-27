@@ -46,7 +46,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.imranshafique" // Your GitHub username
                 artifactId = "cybronsmartswitchsdk"
-                version = "1.2"
+                version = "1.3"
             }
         }
     }
