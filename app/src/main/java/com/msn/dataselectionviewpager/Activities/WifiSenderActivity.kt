@@ -124,7 +124,7 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
             deviceAddress = device.deviceAddress
         }
 
-        p2pConnectionManager.wifiP2pManager?.connect(
+        p2pConnectionManager?.wifiP2pManager?.connect(
             p2pConnectionManager.wifiP2pChannel,
             config,
             object : WifiP2pManager.ActionListener {

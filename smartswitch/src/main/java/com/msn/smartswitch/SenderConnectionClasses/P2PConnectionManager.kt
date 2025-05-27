@@ -29,7 +29,7 @@ class P2PConnectionManager(private val context: Context) {
     private var listener: P2PConnectionListener? = null
     private val TAG = "mavi"
 
-    private val wifiP2pManager: WifiP2pManager? by lazy {
+    val wifiP2pManager: WifiP2pManager? by lazy {
         try {
             // Check if WiFi Direct is supported first
             if (!context.packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI_DIRECT)) {
@@ -50,7 +50,7 @@ class P2PConnectionManager(private val context: Context) {
         }
     }
 
-    private val wifiP2pChannel: WifiP2pManager.Channel? by lazy {
+    val wifiP2pChannel: WifiP2pManager.Channel? by lazy {
         try {
             wifiP2pManager?.initialize(context, context.mainLooper, null)
         } catch (e: Exception) {
