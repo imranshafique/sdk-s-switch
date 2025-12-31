@@ -59,7 +59,6 @@ class FileTransferSDK(
             Log.d(TAG, "sendFiles: socket: $socket")
 
             // Safely calculate total size with try-catch for invalid paths
-            var totalBytesToSend: Long = 0
             try {
                 totalBytesToSend = selectedPath.sumOf { path ->
                     val file = File(path)
