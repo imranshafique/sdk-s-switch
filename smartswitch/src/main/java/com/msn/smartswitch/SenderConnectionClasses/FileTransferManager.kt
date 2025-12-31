@@ -8,7 +8,9 @@ import com.msn.smartswitch.ServerClient.Sockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.DataOutputStream
 import java.io.File
 import java.io.FileInputStream
@@ -41,34 +43,81 @@ class FileTransferSDK(
         this.listener = listener
     }
 
-    fun sendFiles(selectedPath: ArrayList<String>,activity: Activity) {
+    fun sendFiles(selectedPath: ArrayList<String>, activity: Activity) {
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
         CoroutineScope(Dispatchers.IO).launch {
             val socket = Sockets.getSocket()
             if (socket == null || socket.isClosed) {
                 Log.e(TAG, "sendFiles: Socket is null or closed")
-                listener?.onConnectionError()
+                withContext(Dispatchers.Main) {
+                    listener?.onConnectionError()
+                }
                 return@launch
             }
+
             Log.d(TAG, "sendFiles: socket: $socket")
-            totalBytesToSend = getTotalSizeInBytes(selectedPath)
+
+            // Safely calculate total size with try-catch for invalid paths
+            var totalBytesToSend: Long = 0
+            try {
+                totalBytesToSend = selectedPath.sumOf { path ->
+                    val file = File(path)
+                    if (file.exists() && file.isFile) file.length() else 0L
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Error calculating total size", e)
+                withContext(Dispatchers.Main) {
+                    listener?.onConnectionError()
+                }
+                return@launch
+            }
+
             Log.d(TAG, "sendFiles: totalSize: $totalBytesToSend")
 
-            val dataOutputStream = DataOutputStream(socket.getOutputStream())
+            try {
+                val dataOutputStream = DataOutputStream(BufferedOutputStream(socket.getOutputStream()))
 
-            Log.d(TAG, "sendFiles: Sending file count: ${selectedPath.size}")
-            Log.d(TAG, "sendFiles: Sending file count: ${selectedPath}")
-            totalData = selectedPath.size
-            dataOutputStream.writeInt(selectedPath.size)
-            dataOutputStream.writeLong(totalBytesToSend)
-            dataOutputStream.flush()
+                Log.d(TAG, "sendFiles: Sending file count: ${selectedPath.size}")
+                dataOutputStream.writeInt(selectedPath.size)
+                dataOutputStream.writeLong(totalBytesToSend)
+                dataOutputStream.flush()
 
-            // **Create a copy of the list to prevent modification issues**
-            val selectedPathCopy = ArrayList(selectedPath)
+                totalData = selectedPath.size
 
-            for (path in selectedPathCopy) {
-                Log.d(TAG, "sendFiles: Sending file: $path")
-                sendData(File(path), dataOutputStream, socket)
+                // Create a snapshot copy to avoid any potential concurrent modification
+                val pathsToSend = ArrayList(selectedPath)
+
+                for (path in pathsToSend) {
+                    val file = File(path)
+                    if (!file.exists() || !file.isFile) {
+                        Log.w(TAG, "Skipping invalid file: $path")
+                        continue
+                    }
+
+                    Log.d(TAG, "sendFiles: Sending file: $path")
+                    try {
+                        sendData(file, dataOutputStream, socket)
+                    } catch (e: Exception) {
+                        Log.e(TAG, "Error sending file: $path", e)
+                        // Optionally notify listener of partial failure
+                        break // or continue depending on requirements
+                    }
+                }
+
+                dataOutputStream.flush()
+                // Do not close the stream here if the socket is reused elsewhere
+
+            } catch (e: IOException) {
+                Log.e(TAG, "IO error during header/sendFiles", e)
+                withContext(Dispatchers.Main) {
+                    listener?.onConnectionError()
+                }
+            } catch (e: Exception) {
+                Log.e(TAG, "Unexpected error in sendFiles", e)
+                withContext(Dispatchers.Main) {
+                    listener?.onConnectionError()
+                }
             }
         }
     }
