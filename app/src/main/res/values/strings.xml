@@ -26,4 +26,17 @@
     <string name="device_name">name</string>
     <string name="connect">Connect</string>
     <string name="done">Done</string>
+    <string name="connectionType">Connection Type</string>
+    <string name="or">OR</string>
+    <string name="something_went_wrong_check_internet_and_gps">Something went wrong. Check internet and GPS.</string>
+    <string name="connected_as_client">Connected as Client!</string>
+    <string name="connected_as_group_owner">Connected as Group Owner!</string>
+    <string name="discovery_started">Discovery Started</string>
+    <string name="connected_successfully">Connected successfully!</string>
+    <string name="connecting_to">Connecting to %1$s…</string>
+    <string name="connection_successful_to_device">Connection successful to device: %1$s</string>
+    <string name="permission_not_granted_go_to_settings">Permission not Granted Go to Settings</string>
+    <string name="send">Send</string>
+    <string name="receive">Receive</string>
+    <string name="qrcode">QRCode</string>
 </resources>

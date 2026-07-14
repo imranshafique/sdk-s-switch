@@ -46,7 +46,7 @@ afterEvaluate {
                 from(components["release"])
                 groupId = "com.github.imranshafique" // Your GitHub username
                 artifactId = "cybronsmartswitchsdk"
-                version = "1.1"
+                version = "1.5"
             }
         }
     }
@@ -63,5 +63,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
+    implementation("com.google.zxing:core:3.5.1")
 
 }
