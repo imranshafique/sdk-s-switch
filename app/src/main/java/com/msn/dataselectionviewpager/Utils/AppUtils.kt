@@ -55,22 +55,13 @@ object AppUtils {
         }
     }
 
-    fun isNetworkEnabled(locationManager: LocationManager): Boolean {
-        try {
-            return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-        } catch (ex: Exception) {
-        }
-        return false
-    }
+    fun isNetworkEnabled(locationManager: LocationManager): Boolean = runCatching {
+        locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }.getOrDefault(false)
 
-    fun isGPSEnabled(locationManager: LocationManager): Boolean {
-
-        try {
-            return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-        } catch (ex: Exception) {
-        }
-        return false
-    }
+    fun isGPSEnabled(locationManager: LocationManager): Boolean = runCatching {
+        locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
+    }.getOrDefault(false)
     fun Context.toast(msg: String){
         Toast.makeText(this,msg, Toast.LENGTH_SHORT).show()
     }

@@ -80,8 +80,7 @@ class MediaViewModel : ViewModel() {
             val bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
             retriever.release()
             bitmap
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: RuntimeException) {
             null
         }
     }

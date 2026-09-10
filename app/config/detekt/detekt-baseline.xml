@@ -1,0 +1,91 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>EmptyCatchBlock:AppUtils.kt:AppUtils${ }</ID>
+    <ID>MaxLineLength:ConstantVariables.kt:ConstantVariables$private val sharedPreferences: SharedPreferences = context.getSharedPreferences("MyPrefrences", Context.MODE_PRIVATE)</ID>
+    <ID>MaxLineLength:ContactAdapter.kt:ContactAdapter$class</ID>
+    <ID>MaxLineLength:DashboardActivity.kt:DashboardActivity$Toast.makeText(this@DashboardActivity,getString(R.string.permission_not_granted_go_to_settings), Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:DataReceiveActivity.kt:DataReceiveActivity$flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK</ID>
+    <ID>MaxLineLength:DataReceiveActivity.kt:DataReceiveActivity.&lt;no name provided&gt;$flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK</ID>
+    <ID>MaxLineLength:DataTransferActivity.kt:DataTransferActivity$binding.tvTotalFilesSizes.text = resources?.getString(R.string.totalFilesSize) + " " + Utilities.formatSize(totalFilesSizes)</ID>
+    <ID>MaxLineLength:DataTransferActivity.kt:DataTransferActivity$flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK</ID>
+    <ID>MaxLineLength:DataTransferActivity.kt:DataTransferActivity.&lt;no name provided&gt;$flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK</ID>
+    <ID>MaxLineLength:DocumentsAdapter.kt:DocumentsAdapter$fileName.endsWith(".doc", ignoreCase = true) || fileName.endsWith(".docx", ignoreCase = true) -&gt; R.drawable.ic_word</ID>
+    <ID>MaxLineLength:DocumentsAdapter.kt:DocumentsAdapter$fileName.endsWith(".xls", ignoreCase = true) || fileName.endsWith(".xlsx", ignoreCase = true) -&gt; R.drawable.ic_excel</ID>
+    <ID>MaxLineLength:DocumentsFolderAdapter.kt:DocumentsFolderAdapter$mimeType.startsWith("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")</ID>
+    <ID>MaxLineLength:DocumentsFolderAdapter.kt:DocumentsFolderAdapter$mimeType.startsWith("application/vnd.openxmlformats-officedocument.wordprocessingml.document")</ID>
+    <ID>MaxLineLength:ImagesFragment.kt:ImagesFragment$Toast.makeText(requireContext(), "Showing images for folder: ${folderWithImageCount.folder.name}", Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:MainActivity.kt:MainActivity$Toast.makeText(this@MainActivity,"Permission not Granted Go to Settings", Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:MediaViewModel.kt:MediaViewModel$"Excel" to listOf("application/vnd.ms-excel", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")</ID>
+    <ID>MaxLineLength:MediaViewModel.kt:MediaViewModel$"Word" to listOf("application/msword", "application/vnd.openxmlformats-officedocument.wordprocessingml.document")</ID>
+    <ID>MaxLineLength:QrCodeScannerActivity.kt:QrCodeScannerActivity$if</ID>
+    <ID>MaxLineLength:WifiReceiverActivity.kt:WifiReceiverActivity$Toast.makeText(this@WifiReceiverActivity,"SomeThing went Wrong check internet and gps ",Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:WifiReceiverActivity.kt:WifiReceiverActivity$Toast.makeText(this@WifiReceiverActivity,"SomeThing went Wrong check internet and gps",Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:WifiReceiverActivity.kt:WifiReceiverActivity.&lt;no name provided&gt;$Toast.makeText(this@WifiReceiverActivity, "Connected to ${device.deviceName}!", Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:WifiSenderActivity.kt:WifiSenderActivity$Toast.makeText(this@WifiSenderActivity, resources?.getString(R.string.something_went_wrong_check_internet_and_gps),Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:WifiSenderActivity.kt:WifiSenderActivity$Toast.makeText(this@WifiSenderActivity,resources?.getString(R.string.something_went_wrong_check_internet_and_gps),Toast.LENGTH_SHORT).show()</ID>
+    <ID>MaxLineLength:WifiSenderActivity.kt:WifiSenderActivity.&lt;no name provided&gt;$Toast.makeText(this@WifiSenderActivity, getString(R.string.connecting_to, device.deviceName), Toast.LENGTH_SHORT).show()</ID>
+    <ID>NestedBlockDepth:ContactAdapter.kt:ContactAdapter$private fun convertContactsToVcf: File?</ID>
+    <ID>NewLineAtEndOfFile:AppsAdapter.kt:com.msn.dataselectionviewpager.Adapter.dataShowingAdapters.AppsAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:ConstantVariables.kt:com.msn.dataselectionviewpager.SelectedURis.ConstantVariables.kt</ID>
+    <ID>NewLineAtEndOfFile:DashboardActivity.kt:com.msn.dataselectionviewpager.DashboardActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:DataReceiveActivity.kt:com.msn.dataselectionviewpager.Activities.DataReceiveActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:DocumentsAdapter.kt:com.msn.dataselectionviewpager.Adapter.dataShowingAdapters.DocumentsAdapter.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt:com.msn.dataselectionviewpager.ExampleUnitTest.kt</ID>
+    <ID>NewLineAtEndOfFile:FolderWithImageCount.kt:com.msn.dataselectionviewpager.dataClass.FolderWithImageCount.kt</ID>
+    <ID>NewLineAtEndOfFile:ReceiverConnectioTypeActivity.kt:com.msn.dataselectionviewpager.Activities.ReceiverConnectioTypeActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:SenderConnectionTypeActivity.kt:com.msn.dataselectionviewpager.Activities.SenderConnectionTypeActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:VideosFolderAdapter.kt:com.msn.dataselectionviewpager.Adapter.FolderAdapters.VideosFolderAdapter.kt</ID>
+    <ID>PackageNaming:AppConstant.kt:package com.msn.dataselectionviewpager.Utils</ID>
+    <ID>PackageNaming:AppUtils.kt:package com.msn.dataselectionviewpager.Utils</ID>
+    <ID>PackageNaming:AppsAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:AppsFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:AudioAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:AudioFolderAdapter.kt:package com.msn.dataselectionviewpager.Adapter.FolderAdapters</ID>
+    <ID>PackageNaming:AudiosFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:ConstantVariables.kt:package com.msn.dataselectionviewpager.SelectedURis</ID>
+    <ID>PackageNaming:ContactAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:ContactFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:DataReceiveActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:DataTransferActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:DeviceListAdapter.kt:package com.msn.dataselectionviewpager.Adapter</ID>
+    <ID>PackageNaming:DocumentsAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:DocumentsFolderAdapter.kt:package com.msn.dataselectionviewpager.Adapter.FolderAdapters</ID>
+    <ID>PackageNaming:DocumentsFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:FragmentAdapter.kt:package com.msn.dataselectionviewpager.Adapter.ViewPagerAdapter</ID>
+    <ID>PackageNaming:GlideModule.kt:package com.msn.dataselectionviewpager.Utils</ID>
+    <ID>PackageNaming:ImageAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:ImagesFolderAdapter.kt:package com.msn.dataselectionviewpager.Adapter.FolderAdapters</ID>
+    <ID>PackageNaming:ImagesFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:MediaViewModel.kt:package com.msn.dataselectionviewpager.ViewModel</ID>
+    <ID>PackageNaming:MyApplication.kt:package com.msn.dataselectionviewpager.ApplicationClass</ID>
+    <ID>PackageNaming:PermissionHelper.kt:package com.msn.dataselectionviewpager.Utils</ID>
+    <ID>PackageNaming:QrCodeGeneratorActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:QrCodeScannerActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:ReceiverConnectioTypeActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:SenderConnectionTypeActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:VideoAdapter.kt:package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters</ID>
+    <ID>PackageNaming:VideosFolderAdapter.kt:package com.msn.dataselectionviewpager.Adapter.FolderAdapters</ID>
+    <ID>PackageNaming:VideosFragment.kt:package com.msn.dataselectionviewpager.Fragments</ID>
+    <ID>PackageNaming:WifiReceiverActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PackageNaming:WifiSenderActivity.kt:package com.msn.dataselectionviewpager.Activities</ID>
+    <ID>PrintStackTrace:MediaViewModel.kt:MediaViewModel$e</ID>
+    <ID>SwallowedException:AppUtils.kt:AppUtils$ex: Exception</ID>
+    <ID>SwallowedException:PermissionHelper.kt:PermissionHelper$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:AppUtils.kt:AppUtils$ex: Exception</ID>
+    <ID>TooGenericExceptionCaught:AudioFolderAdapter.kt:AudioFolderAdapter.FolderViewHolder$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:MediaViewModel.kt:MediaViewModel$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:PermissionHelper.kt:PermissionHelper$e: Exception</ID>
+    <ID>UnusedParameter:DocumentsFragment.kt:DocumentsFragment$folderName: String</ID>
+    <ID>VariableNaming:DashboardActivity.kt:DashboardActivity$private val sender_permissions = if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.TIRAMISU) { arrayOf( Manifest.permission.NEARBY_WIFI_DEVICES, Manifest.permission.ACCESS_FINE_LOCATION ) } else { arrayOf( Manifest.permission.ACCESS_FINE_LOCATION ) }</ID>
+    <ID>VariableNaming:DataReceiveActivity.kt:DataReceiveActivity$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:DataTransferActivity.kt:DataTransferActivity$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:MainActivity.kt:MainActivity$private val sender_permissions = if (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.TIRAMISU) { arrayOf( Manifest.permission.NEARBY_WIFI_DEVICES, Manifest.permission.ACCESS_FINE_LOCATION ) } else { arrayOf( Manifest.permission.ACCESS_FINE_LOCATION ) }</ID>
+    <ID>VariableNaming:QrCodeGeneratorActivity.kt:QrCodeGeneratorActivity$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:QrCodeScannerActivity.kt:QrCodeScannerActivity$private val TAG = "mavi"</ID>
+    <ID>VariableNaming:VideoAdapter.kt:VideoAdapter$private var TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:WifiReceiverActivity.kt:WifiReceiverActivity$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:WifiSenderActivity.kt:WifiSenderActivity$private val TAG = javaClass.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>
