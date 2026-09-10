@@ -1,19 +1,21 @@
 package com.msn.smartswitch.Transfer
 
 import android.app.Activity
+import android.content.ContentValues
+import android.os.Build
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.WindowManager
 import com.msn.smartswitch.ServerClient.Sockets
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.io.DataOutputStream
-import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 
 class DataReceiverManger {
 
@@ -40,8 +42,10 @@ class DataReceiverManger {
     private val existingSocket = Sockets.getSocket()
     private var totalBytesToReceive: Long = 0L
     private var totalBytesReceived: Long = 0L
+    private var currentActivity: Activity? = null
 
     fun startReceive(activity: Activity) {
+        currentActivity = activity
         Log.d(TAG, "startReceive: Attempting to receive files")
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
         CoroutineScope(Dispatchers.IO).launch {
@@ -113,29 +117,18 @@ class DataReceiverManger {
                 return  // Skip the corrupt file
             }
 
-            val fileName = File(filePath).name
-            val folderName = "SmartSwitchSDK"
-            val folderPath = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                folderName
-            )
-            if (!folderPath.exists()) folderPath.mkdirs()
+            val fileName = filePath.substringAfterLast('/').substringAfterLast('\\')
+            if (fileName.isBlank() || fileName.contains("..")) {
+                listener?.onFileReceiveFailure("Invalid file name")
+                return
+            }
 
             if (fileName.isNotEmpty()) {
-                var receivedFile = File(folderPath, fileName)
-                var fileCounter = 1
-                val baseFileName =
-                    fileName.substringBeforeLast(".") // Get file name without extension
-                val fileExtension = fileName.substringAfterLast(".", "") // Get file extension
-
-                while (receivedFile.exists()) {
-                    val newFileName = "$baseFileName($fileCounter).$fileExtension"
-                    receivedFile = File(folderPath, newFileName)
-                    fileCounter++
+                val output = createDestination(fileName)
+                if (output == null) {
+                    listener?.onFileReceiveFailure("Could not create destination")
+                    return
                 }
-
-                val fileOutputStream = FileOutputStream(receivedFile)
-                val bufferedOutputStream = BufferedOutputStream(fileOutputStream)
 
                 val buffer = ByteArray(1024 * 256) // 256KB buffer (same as sender)
                 var bytesRead: Int
@@ -149,7 +142,7 @@ class DataReceiverManger {
                         bytesRead = dataInputStream?.read(buffer, 0, bytesToRead) ?: -1
                         if (bytesRead == -1) throw IOException("Corrupt file detected, bytesRead == -1")
 
-                        bufferedOutputStream.write(buffer, 0, bytesRead)
+                        output.write(buffer, 0, bytesRead)
                         totalBytesRead += bytesRead
                         totalBytesReceived += bytesRead
 
@@ -160,8 +153,8 @@ class DataReceiverManger {
                         Log.d(TAG, "receiveFile: Receiving $fileName - $progress%")
                     }
 
-                    bufferedOutputStream.flush()
-                    bufferedOutputStream.close()
+                    output.flush()
+                    output.close()
 
                     Log.d(
                         TAG,
@@ -172,7 +165,7 @@ class DataReceiverManger {
                 } catch (e: IOException) {
                     Log.e(TAG, "receiveFile: Corrupt file detected ($fileName), skipping.")
                     listener?.onFileReceiveFailure("File $fileName is corrupt and was skipped.")
-                    receivedFile.delete() // Delete the corrupt file
+                    output.close()
                 }
 
                 if (progress == 100) {
@@ -195,6 +188,20 @@ class DataReceiverManger {
         } catch (e: Exception) {
             Log.e(TAG, "receiveFile: Exception: ${e.localizedMessage}")
             listener?.onFileReceiveFailure("Exception: ${e.message}, skipping file.")
+        }
+    }
+
+    private fun createDestination(fileName: String): OutputStream? {
+        val activity = currentActivity ?: return null
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val values = ContentValues().apply {
+                put(MediaStore.Downloads.DISPLAY_NAME, fileName)
+                put(MediaStore.Downloads.RELATIVE_PATH, "${Environment.DIRECTORY_DOWNLOADS}/SmartSwitchSDK")
+            }
+            activity.contentResolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+                ?.let(activity.contentResolver::openOutputStream)
+        } else {
+            FileOutputStream(java.io.File(activity.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS), fileName))
         }
     }
 }
