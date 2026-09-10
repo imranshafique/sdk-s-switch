@@ -70,6 +70,7 @@ class P2PConnectionManager(private val context: Context) {
             override fun onReceive(context: Context, intent: Intent) {
                 when (intent.action) {
                     WifiP2pManager.WIFI_P2P_PEERS_CHANGED_ACTION -> {
+                        if (!hasRequiredPermissions(context)) return
                         wifiP2pManager?.requestPeers(wifiP2pChannel) { peerList ->
 
                             Log.d(TAG, "peerList ${peerList.deviceList.toString()}")
@@ -151,6 +152,7 @@ class P2PConnectionManager(private val context: Context) {
     }
 
     fun disconnectWifiDirectIfConnected() {
+        if (!hasRequiredPermissions(context)) return
         wifiP2pManager?.requestGroupInfo(
             wifiP2pChannel
         )
@@ -171,6 +173,10 @@ class P2PConnectionManager(private val context: Context) {
 
 
     fun startDiscovery() {
+        if (!hasRequiredPermissions(context)) {
+            listener?.onError("Required Wi-Fi Direct permission is missing")
+            return
+        }
         isServerStarted = false
         isClientStarted = false
         wifiP2pManager?.discoverPeers(wifiP2pChannel, object : WifiP2pManager.ActionListener {
@@ -260,6 +266,10 @@ class P2PConnectionManager(private val context: Context) {
         onSuccess: () -> Unit,
         onFailure: (reason: Int) -> Unit
     ) {
+        if (!hasRequiredPermissions(context)) {
+            listener?.onError("Required Wi-Fi Direct permission is missing")
+            return
+        }
         val config = WifiP2pConfig().apply {
             deviceAddress = device.deviceAddress
         }

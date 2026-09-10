@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.msn.smartswitch"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 28
@@ -57,11 +57,11 @@ afterEvaluate {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation(libs.kotlinx.coroutines.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.zxing:core:3.5.1")
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.zxing.core)
 
 }

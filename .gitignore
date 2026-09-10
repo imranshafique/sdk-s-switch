@@ -1,5 +1,6 @@
 *.iml
 .gradle
+/.kotlin
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -12,4 +13,6 @@
 /captures
 .externalNativeBuild
 .cxx
+/.android-sdk
+/commandlinetools-win-*_latest.zip
 local.properties

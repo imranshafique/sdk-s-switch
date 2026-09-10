@@ -4,6 +4,7 @@ package com.msn.smartswitch.Models
 
 import kotlin.math.ln
 import kotlin.math.pow
+import java.util.Locale
 
 
 class Utilities {
@@ -17,9 +18,9 @@ class Utilities {
             val digitGroups = (ln(bytes.toDouble()) / ln(1024.0)).toInt().coerceIn(units.indices)
             val size = bytes / 1024.0.pow(digitGroups.toDouble())
             return when {
-                units[digitGroups] == "MB" -> String.format("%.0f MB", size) // No decimal for MB
-                digitGroups >= 3 -> String.format("%.3f %s", size, units[digitGroups]) // 3 decimals for GB+
-                else -> String.format("%.0f %s", size, units[digitGroups]) // Default format
+                units[digitGroups] == "MB" -> String.format(Locale.ROOT, "%.0f MB", size)
+                digitGroups >= 3 -> String.format(Locale.ROOT, "%.3f %s", size, units[digitGroups])
+                else -> String.format(Locale.ROOT, "%.0f %s", size, units[digitGroups])
             }
         }
 
