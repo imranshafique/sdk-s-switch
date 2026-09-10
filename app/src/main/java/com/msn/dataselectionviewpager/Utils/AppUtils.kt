@@ -10,7 +10,6 @@ import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.os.Environment
-import android.util.Log
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
@@ -32,41 +31,25 @@ object AppUtils {
             return networkInfo?.isConnected ?: false
         }
     }
-    var permission = arrayListOf<String>(
-        Manifest.permission.READ_CONTACTS,
-        Manifest.permission.READ_EXTERNAL_STORAGE
-    )
     fun hasPermission(context: Context): Boolean {
-        val list = java.util.ArrayList<String>()
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-
-            permission = arrayListOf<String>(
+        val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            listOf(
                 Manifest.permission.READ_CONTACTS,
                 Manifest.permission.POST_NOTIFICATIONS,
                 Manifest.permission.READ_MEDIA_IMAGES,
                 Manifest.permission.READ_MEDIA_VIDEO,
                 Manifest.permission.READ_MEDIA_AUDIO
-
             )
-
-
-            Log.e("TAG", "checkPermissions: $permission")
+        } else {
+            listOf(
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            )
         }
 
-        for (perm in permission) {
-            if (ContextCompat.checkSelfPermission(
-                    context,
-                    perm
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                list.add(perm)
-            }
+        return requiredPermissions.all { permission ->
+            ContextCompat.checkSelfPermission(context, permission) == PackageManager.PERMISSION_GRANTED
         }
-
-        Log.e("TAG", "checkPermissions : $list ")
-
-        return list.isEmpty()
 
     }
 

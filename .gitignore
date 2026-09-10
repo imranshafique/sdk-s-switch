@@ -1,5 +1,7 @@
 *.iml
 .gradle
+/.lint-run*.log
+/app-lint*.log
 /.kotlin
 /local.properties
 /.idea/caches

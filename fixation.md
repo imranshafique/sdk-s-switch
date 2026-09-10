@@ -22,7 +22,22 @@ Bring both Android modules to the current, supported AGP 9.3 toolchain; remove u
 2. Enable AGP 9 built-in Kotlin by removing the obsolete Kotlin Android plugin and `kotlinOptions` blocks. Java 17 compile options remain the single JVM-target authority.
 3. Replace kapt with KSP and move Hilt to 2.60.1 using the plugins DSL.
 4. Remove conflicting, obsolete root `buildscript` classpaths and obsolete direct dependencies. Keep only dependencies demonstrably used by Kotlin source or XML resources.
-5. Remove unused `ConnectionModel` and `GlideModule`; Hilt no longer provides an unused Glide binding.
+5. Remove unused `ConnectionModel`. Retain `GlideModule`: `VideosFragment` injects its `RequestManager`, so deleting the binding is a build-breaking change.
+
+## Current implementation status
+
+- Completed: AGP/KSP/Hilt migration, current API 37 build configuration, AndroidX dependency updates, release publication wiring, and library-module Lint remediation.
+- Completed: app media scanning now uses `viewModelScope` instead of unowned coroutine scopes; permission checks no longer mutate shared global state.
+- In progress: application-module Lint is run after every source batch. Its report is the source of truth; do not mark this gate complete from a partial console log.
+- Deliberately deferred: removing broad storage permissions. The existing app models and transfer flows still require filesystem paths and the document scan reads the deprecated MediaStore `_data` column. Removing those permissions before a URI-based data-model migration would break file discovery and transfer.
+
+### Storage migration delivery sequence
+
+1. Change `AudioModel`, `DocumentModel`, folder models, adapters, sharing, and transfer APIs to store a `content://` URI plus display metadata rather than `File` or filesystem-path strings.
+2. Use MediaStore URIs for images, audio, and video, requesting only the corresponding Android 13+ `READ_MEDIA_*` permission (and `READ_EXTERNAL_STORAGE` with `maxSdkVersion="32"` for older devices).
+3. Replace document-wide scanning with the Storage Access Framework: `OpenMultipleDocuments` for user-selected documents and persisted URI permissions. Use `DocumentFile`/`ContentResolver` streams for reads and transfer.
+4. Update transfer receivers to write to user-selected `CreateDocument` URIs or MediaStore pending items, then remove `MANAGE_EXTERNAL_STORAGE`, `WRITE_EXTERNAL_STORAGE`, `requestLegacyExternalStorage`, and all `_data`-column queries.
+5. Run manual regression tests for selection, thumbnails, send/receive, cancellation, process recreation, and API 29/33/35 permission flows before removing the legacy manifest declarations.
 
 ## Required source remediation
 
