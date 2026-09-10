@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.detekt)
     id("maven-publish")
 }
 
@@ -39,6 +40,12 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    baseline = file("$rootDir/config/detekt/detekt-baseline.xml")
 }
 // Publishing configuration
 afterEvaluate {
