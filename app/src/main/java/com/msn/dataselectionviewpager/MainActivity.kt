@@ -80,7 +80,7 @@ class MainActivity : AppCompatActivity() {
 
         // Create custom tabs for each fragment
         tabNames.forEachIndexed { index, tabName ->
-            val tabView = layoutInflater.inflate(R.layout.custom_tab, null) // Inflate custom tab layout
+            val tabView = layoutInflater.inflate(R.layout.custom_tab, binding.customTabContainer, false)
             val tabIcon: ImageView = tabView.findViewById(R.id.tabIcon)
             val tabText: TextView = tabView.findViewById(R.id.tabText)
             val tabIndicator: View = tabView.findViewById(R.id.tabIndicator)

@@ -19,7 +19,6 @@
         app:strokeColor="@android:color/darker_gray"
         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent"
         android:src="@drawable/ic_launcher_background"
-        android:clipToOutline="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         />

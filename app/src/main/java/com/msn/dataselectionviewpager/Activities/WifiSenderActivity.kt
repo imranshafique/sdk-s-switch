@@ -1,7 +1,6 @@
 package com.msn.dataselectionviewpager.Activities
 
 
-import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.wifi.p2p.WifiP2pConfig
@@ -106,15 +105,10 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
         p2pConnectionManager.unregisterReceiver()
     }
     private fun connectToDevice(device: WifiP2pDevice) {
-        val locationPermissionGranted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-        val nearbyWifiPermissionGranted = ContextCompat.checkSelfPermission(
-            this,
-            Manifest.permission.NEARBY_WIFI_DEVICES
-        ) == PackageManager.PERMISSION_GRANTED
-
+        if (!hasWifiDirectPermissions()) {
+            Toast.makeText(this, R.string.permission_not_granted_go_to_settings, Toast.LENGTH_SHORT).show()
+            return
+        }
 
         Log.d("ConnectionAttempt", "Attempting connection to device: ${device.deviceName} - ${device.deviceAddress}")
         Toast.makeText(this,
@@ -141,6 +135,20 @@ class WifiSenderActivity : AppCompatActivity(), P2PConnectionListener {
                 }
             }
         )
+    }
+
+    private fun hasWifiDirectPermissions(): Boolean {
+        val hasLocation = ContextCompat.checkSelfPermission(
+            this,
+            android.Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+        val hasNearbyWifi = android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU ||
+            ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.NEARBY_WIFI_DEVICES
+            ) == PackageManager.PERMISSION_GRANTED
+
+        return hasLocation && hasNearbyWifi
     }
 
 }

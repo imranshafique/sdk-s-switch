@@ -4,11 +4,11 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.Adapter.dataShowingAdapters.AppsAdapter
@@ -52,7 +52,6 @@ class AppsFragment : Fragment() {
                 val appIcon = app.loadIcon(pm)
                 val appPath = app.sourceDir
 
-                Log.d("AppsAdapter", "getInstalledApps: $appPath") // Log the app name
                 appsList.add(AppInfo(appName, appUri, appIcon, appPath))
             }
         }
@@ -69,6 +68,6 @@ class AppsFragment : Fragment() {
 
     // Helper function to generate a URI for each app
     private fun getAppContentUri(packageName: String): Uri {
-        return Uri.parse("content://$packageName") // Example content URI
+        return "content://$packageName".toUri()
     }
 }
