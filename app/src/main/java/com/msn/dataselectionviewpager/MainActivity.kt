@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.ImageView
@@ -31,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
      private lateinit var adapter: FragmentAdapter
-     private var TAG = javaClass.simpleName
     private val sender_permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.NEARBY_WIFI_DEVICES,
@@ -52,10 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         locationManager =
             applicationContext.getSystemService(Context.LOCATION_SERVICE) as (LocationManager)
-        Log.d(TAG, "onCreate: selectedPath before: ${selectedPath.size}")
-
         selectedPath.clear()
-        Log.d(TAG, "onCreate: selectedPath: ${selectedPath.size}")
         // Set the adapter to ViewPager2
         adapter = FragmentAdapter(this)
         binding.viewPager.adapter = adapter

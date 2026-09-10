@@ -6,7 +6,6 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -60,8 +59,6 @@ class MediaViewModel : ViewModel() {
             val newFolderList = mutableListOf<FolderWithVideoCount>()
 
             for (folder in videoDirs) {
-                Log.d("VideoFolders", "Folder Path: ${folder.absolutePath}")
-
                 val videos = folder.listFiles { file ->
                     file.isFile && file.extension.lowercase() in VIDEO_EXTENSIONS
                 }
@@ -120,8 +117,6 @@ class MediaViewModel : ViewModel() {
 
                 val audioCount = audioFiles?.size ?: 0
 
-                Log.d("AudioFile", "Folder: ${folder.absolutePath}, Count: $audioCount")
-
                 val folderWithAudioCount = FolderWithAudioCount(folder, audioCount)
 
                 newFolderList.add(folderWithAudioCount)
@@ -138,11 +133,6 @@ class MediaViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val audios = folder.listFiles { file ->
                 file.isFile && file.extension.lowercase() in AUDIO_EXTENSIONS
-            }
-            audios?.forEach { file ->
-                // Print or log the file path
-                Log.d("AudioFile", "Audio File absolutePath: ${file.absolutePath}")
-                Log.d("AudioFile", "Audio File Path: ${file.path}")
             }
             val audioModels = audios?.map { file ->
                 AudioModel(name = file.name, filePath = file.absolutePath)
@@ -196,8 +186,6 @@ class MediaViewModel : ViewModel() {
                     val mimeType = cursor.getString(mimeIndex)
                     val name = cursor.getString(nameIndex)
                     val path = cursor.getString(dataIndex)
-                    Log.d("docType", "fetchAndCategorizeDocuments: name: $name")
-                    Log.d("docType", "fetchAndCategorizeDocuments: path: $path")
 
                     mimeCategories.forEach { (category, mimeTypes) ->
                         if (mimeTypes.contains(mimeType)) {
