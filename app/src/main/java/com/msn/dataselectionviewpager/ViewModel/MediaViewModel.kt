@@ -66,11 +66,7 @@ class MediaViewModel : ViewModel() {
                     file.isFile && file.extension.lowercase() in VIDEO_EXTENSIONS
                 }
                 val videoCount = videos?.size ?: 0
-                val thumbnail = if (videoCount > 0) {
-                    getVideoThumbnail(videos[0].absolutePath)
-                } else {
-                    null
-                }
+                val thumbnail = videos?.firstOrNull()?.let { getVideoThumbnail(it.absolutePath) }
 
                 newFolderList.add(FolderWithVideoCount(folder, videoCount, thumbnail))
 

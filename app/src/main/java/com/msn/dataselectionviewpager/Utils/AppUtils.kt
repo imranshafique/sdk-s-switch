@@ -8,8 +8,6 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
-import android.os.Build
-import android.os.Environment
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
@@ -21,15 +19,9 @@ object AppUtils {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork
-            val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
-            return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
-                ?: false
-        } else {
-            val networkInfo = connectivityManager.activeNetworkInfo
-            return networkInfo?.isConnected ?: false
-        }
+        val network = connectivityManager.activeNetwork
+        val networkCapabilities = connectivityManager.getNetworkCapabilities(network)
+        return networkCapabilities?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) ?: false
     }
     fun hasPermission(context: Context): Boolean {
         val requiredPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

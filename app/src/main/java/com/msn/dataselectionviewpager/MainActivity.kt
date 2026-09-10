@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import androidx.viewpager2.widget.ViewPager2
 import com.msn.dataselectionviewpager.Activities.QrCodeGeneratorActivity
@@ -123,12 +124,12 @@ class MainActivity : AppCompatActivity() {
 
             // Highlight selected tab
             if (i == position) {
-                tabIcon.setColorFilter(resources.getColor(android.R.color.holo_blue_dark))  // Change color for selected
-                tabText.setTextColor(resources.getColor(android.R.color.holo_blue_dark))    // Change text color for selected
+                tabIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
+                tabText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
                 tabIndicator.visibility = View.VISIBLE  // Show indicator
             } else {
-                tabIcon.setColorFilter(resources.getColor(android.R.color.darker_gray))    // Default color for unselected
-                tabText.setTextColor(resources.getColor(android.R.color.darker_gray))      // Default text color for unselected
+                tabIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.darker_gray))
+                tabText.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
                 tabIndicator.visibility = View.GONE    // Hide indicator
             }
         }

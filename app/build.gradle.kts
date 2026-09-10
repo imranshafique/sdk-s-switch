@@ -47,31 +47,30 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(project(":smartswitch"))
-    ksp("com.google.dagger:hilt-compiler:2.60.1")
+    ksp(libs.hilt.compiler)
 
     // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    implementation("androidx.viewpager2:viewpager2:1.1.0")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.11.0")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.11.0")
+    implementation(libs.androidx.viewpager2)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
 
     // SDP and SSP
-    implementation("com.intuit.sdp:sdp-android:1.1.1")
-    implementation("com.intuit.ssp:ssp-android:1.1.1")
+    implementation(libs.sdp.android)
+    implementation(libs.ssp.android)
 
     // Circular ImageView
-    implementation("de.hdodenhof:circleimageview:3.1.0")
+    implementation(libs.circleimageview)
 
     // Glide
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-    implementation ("com.airbnb.android:lottie:5.2.0")
-    val cameraxVersion = "1.6.2"
-    implementation("androidx.camera:camera-camera2:${cameraxVersion}")
-    implementation("androidx.camera:camera-lifecycle:${cameraxVersion}")
-    implementation("androidx.camera:camera-view:${cameraxVersion}")
-    implementation("com.google.mlkit:barcode-scanning:17.3.0")
+    implementation(libs.glide)
+    implementation(libs.lottie)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.mlkit.barcode.scanning)
 }
 

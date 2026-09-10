@@ -2,8 +2,6 @@ package com.msn.dataselectionviewpager.Adapter.dataShowingAdapters
 
 import android.content.Context
 import android.database.Cursor
-import android.graphics.Bitmap
-import android.media.ThumbnailUtils
 import android.net.Uri
 import android.provider.MediaStore
 import android.util.Log
@@ -32,9 +30,6 @@ class VideoAdapter(private val context: Context) : RecyclerView.Adapter<VideoAda
         val checkBox: CheckBox = itemView.findViewById(R.id.checkBox)
 
         fun bind(uri: Uri) {
-            val bitmap: Bitmap? = ThumbnailUtils.createVideoThumbnail(uri.path!!, MediaStore.Video.Thumbnails.MINI_KIND)
-            bitmap?.let { videoThumbnail.setImageBitmap(it) }
-
             val contentUri = if (uri.scheme == "file") {
                 convertFileUriToContentUri(uri)
             } else {

@@ -106,7 +106,7 @@ class AudiosFragment : Fragment(R.layout.fragment_audios) {
                         binding.recyclerView.visibility = View.VISIBLE
                     } else {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }

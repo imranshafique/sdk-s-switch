@@ -88,7 +88,7 @@ class DocumentsFragment : Fragment() {
                         binding.documentsRecyclerView.visibility = View.VISIBLE
                     } else {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }
