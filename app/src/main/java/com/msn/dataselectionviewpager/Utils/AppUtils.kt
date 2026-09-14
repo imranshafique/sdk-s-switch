@@ -8,6 +8,7 @@ import android.location.LocationManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
+import android.os.Build
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 
