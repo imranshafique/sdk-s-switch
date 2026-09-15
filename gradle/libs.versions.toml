@@ -1,17 +1,28 @@
 [versions]
-agp = "8.7.3"
-kotlin = "1.9.24"
-coreKtx = "1.15.0"
+agp = "9.3.2"
+coreKtx = "1.19.0"
 junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
-appcompat = "1.7.0"
-kotlinGradlePlugin = "1.7.10"
-material = "1.12.0"
-activity = "1.10.0"
-constraintlayout = "2.2.0"
-hiltAndroid = "2.48.1"
+junitVersion = "1.3.0"
+espressoCore = "3.7.0"
+appcompat = "1.8.0"
+material = "1.14.0"
+activity = "1.13.0"
+constraintlayout = "2.2.2"
+hiltAndroid = "2.60.1"
+ksp = "2.3.11"
 zxingAndroidEmbedded = "4.3.0"
+coroutines = "1.11.0"
+zxingCore = "3.5.4"
+viewpager2 = "1.1.0"
+lifecycle = "2.11.0"
+sdp = "1.1.1"
+ssp = "1.1.1"
+circleImageView = "3.1.0"
+glide = "5.0.9"
+lottie = "6.7.1"
+cameraX = "1.6.2"
+mlKitBarcode = "17.3.0"
+detekt = "2.0.0-alpha.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -19,15 +30,31 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
-kotlin-gradle-plugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlinGradlePlugin" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltAndroid" }
+androidx-viewpager2 = { group = "androidx.viewpager2", name = "viewpager2", version.ref = "viewpager2" }
+androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycle" }
+androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycle" }
+sdp-android = { group = "com.intuit.sdp", name = "sdp-android", version.ref = "sdp" }
+ssp-android = { group = "com.intuit.ssp", name = "ssp-android", version.ref = "ssp" }
+circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleImageView" }
+glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
+lottie = { group = "com.airbnb.android", name = "lottie", version.ref = "lottie" }
+androidx-camera-camera2 = { group = "androidx.camera", name = "camera-camera2", version.ref = "cameraX" }
+androidx-camera-lifecycle = { group = "androidx.camera", name = "camera-lifecycle", version.ref = "cameraX" }
+androidx-camera-view = { group = "androidx.camera", name = "camera-view", version.ref = "cameraX" }
+mlkit-barcode-scanning = { group = "com.google.mlkit", name = "barcode-scanning", version.ref = "mlKitBarcode" }
 zxing-android-embedded = { module = "com.journeyapps:zxing-android-embedded", version.ref = "zxingAndroidEmbedded" }
+kotlinx-coroutines-android = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-android", version.ref = "coroutines" }
+zxing-core = { module = "com.google.zxing:core", version.ref = "zxingCore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
+hilt = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid" }
+ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+detekt = { id = "dev.detekt", version.ref = "detekt" }
 

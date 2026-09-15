@@ -6,19 +6,17 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.msn.dataselectionviewpager.dataClass.AudioModel
 import com.msn.dataselectionviewpager.dataClass.DocumentModel
 import com.msn.dataselectionviewpager.dataClass.FolderWithAudioCount
 import com.msn.dataselectionviewpager.dataClass.FolderWithImageCount
 import com.msn.dataselectionviewpager.dataClass.FolderWithVideoCount
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.io.File
 
 class MediaViewModel : ViewModel() {
@@ -27,25 +25,18 @@ class MediaViewModel : ViewModel() {
     val imageFolders: LiveData<List<FolderWithImageCount>> = _imageFolders
     // Load image folders in the background
     fun loadImageFolders(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val imageDirs = getMediaDirectories(context)
-
-            for (folder in imageDirs) {
-                val images = folder.listFiles { file -> file.isFile && file.extension in listOf("jpg", "jpeg", "png", "gif") }
+            val folders = imageDirs.map { folder ->
+                val images = folder.listFiles { file ->
+                    file.isFile && file.extension.lowercase() in IMAGE_EXTENSIONS
+                }
                 val imageCount = images?.size ?: 0
-                val thumbnail = if (imageCount > 0) {
-                    BitmapFactory.decodeFile(images?.get(0)?.absolutePath)
-                } else {
-                    null
-                }
+                val thumbnail = images?.firstOrNull()?.let { BitmapFactory.decodeFile(it.absolutePath) }
 
-                val folderWithImageCount = FolderWithImageCount(folder, imageCount, thumbnail)
-
-                // Post each folder update to LiveData immediately
-                withContext(Dispatchers.Main) {
-                    _imageFolders.value = (_imageFolders.value ?: emptyList()) + folderWithImageCount
-                }
+                FolderWithImageCount(folder, imageCount, thumbnail)
             }
+            _imageFolders.postValue(folders)
         }
     }
 
@@ -62,30 +53,21 @@ class MediaViewModel : ViewModel() {
 
     // Load video folders in the background
     fun loadVideoFolders(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val videoDirs = getVideoDirectories(context)
 
             val newFolderList = mutableListOf<FolderWithVideoCount>()
 
             for (folder in videoDirs) {
-                Log.d("VideoFolders", "Folder Path: ${folder.absolutePath}")
-
                 val videos = folder.listFiles { file ->
-                    file.isFile && file.extension in listOf("mp4", "mkv", "avi", "mov")
+                    file.isFile && file.extension.lowercase() in VIDEO_EXTENSIONS
                 }
                 val videoCount = videos?.size ?: 0
-                val thumbnail = if (videoCount > 0) {
-                    getVideoThumbnail(videos[0].absolutePath)
-                } else {
-                    null
-                }
+                val thumbnail = videos?.firstOrNull()?.let { getVideoThumbnail(it.absolutePath) }
 
                 newFolderList.add(FolderWithVideoCount(folder, videoCount, thumbnail))
 
-                // Update LiveData incrementally without duplication
-                withContext(Dispatchers.Main) {
-                    _videoFolders.value = newFolderList.toList() // Assign a fresh list
-                }
+                _videoFolders.postValue(newFolderList.toList())
             }
         }
     }
@@ -98,8 +80,7 @@ class MediaViewModel : ViewModel() {
             val bitmap = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
             retriever.release()
             bitmap
-        } catch (e: Exception) {
-            e.printStackTrace()
+        } catch (_: RuntimeException) {
             null
         }
     }
@@ -123,28 +104,23 @@ class MediaViewModel : ViewModel() {
 
     // Load audio folders in the background
     fun loadAudioFolders(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val audioDirs = getAudioDirectories(context)
 
             val newFolderList = mutableListOf<FolderWithAudioCount>()
 
             for (folder in audioDirs) {
                 val audioFiles = folder.listFiles { file ->
-                    file.isFile && file.extension in listOf("mp3", "wav", "flac", "aac")
+                    file.isFile && file.extension.lowercase() in AUDIO_EXTENSIONS
                 }
 
                 val audioCount = audioFiles?.size ?: 0
-
-                Log.d("AudioFile", "Folder: ${folder.absolutePath}, Count: $audioCount")
 
                 val folderWithAudioCount = FolderWithAudioCount(folder, audioCount)
 
                 newFolderList.add(folderWithAudioCount)
 
-                // Update LiveData incrementally without duplication
-                withContext(Dispatchers.Main) {
-                    _audioFolders.value = newFolderList.toList() // Assign a fresh list
-                }
+                _audioFolders.postValue(newFolderList.toList())
             }
         }
     }
@@ -153,35 +129,28 @@ class MediaViewModel : ViewModel() {
 
     // Load audios from a specific folder in the background
     fun loadAudiosFromFolder(folder: File) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val audios = folder.listFiles { file -> file.isFile && file.extension in listOf("mp3", "wav", "flac", "aac") }
-            audios?.forEach { file ->
-                // Print or log the file path
-                Log.d("AudioFile", "Audio File absolutePath: ${file.absolutePath}")
-                Log.d("AudioFile", "Audio File Path: ${file.path}")
+        viewModelScope.launch(Dispatchers.IO) {
+            val audios = folder.listFiles { file ->
+                file.isFile && file.extension.lowercase() in AUDIO_EXTENSIONS
             }
             val audioModels = audios?.map { file ->
                 AudioModel(name = file.name, filePath = file.absolutePath)
             } ?: emptyList()
-            withContext(Dispatchers.Main) {
-                _audiosInFolder.value = audioModels
-            }
+            _audiosInFolder.postValue(audioModels)
         }
     }
 
     // Load document folders in the background
     fun loadDocumentFolders(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val documentDirs = getMediaDirectories(context)
-            withContext(Dispatchers.Main) {
-                _documentFolders.value = documentDirs
-            }
+            _documentFolders.postValue(documentDirs)
         }
     }
 
     // Load and categorize documents in the background
     fun fetchAndCategorizeDocuments(context: Context) {
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val mimeCategories = mapOf(
                 "PDF" to listOf("application/pdf"),
                 "PowerPoint" to listOf("application/vnd.ms-powerpoint"),
@@ -216,8 +185,6 @@ class MediaViewModel : ViewModel() {
                     val mimeType = cursor.getString(mimeIndex)
                     val name = cursor.getString(nameIndex)
                     val path = cursor.getString(dataIndex)
-                    Log.d("docType", "fetchAndCategorizeDocuments: name: $name")
-                    Log.d("docType", "fetchAndCategorizeDocuments: path: $path")
 
                     mimeCategories.forEach { (category, mimeTypes) ->
                         if (mimeTypes.contains(mimeType)) {
@@ -228,9 +195,7 @@ class MediaViewModel : ViewModel() {
                 }
             }
 
-            withContext(Dispatchers.Main) {
-                _categorizedDocuments.value = categorizedDocuments
-            }
+            _categorizedDocuments.postValue(categorizedDocuments)
         }
     }
 
@@ -304,5 +269,11 @@ class MediaViewModel : ViewModel() {
         }
 
         return directories
+    }
+
+    private companion object {
+        val IMAGE_EXTENSIONS = setOf("jpg", "jpeg", "png", "gif")
+        val VIDEO_EXTENSIONS = setOf("mp4", "mkv", "avi", "mov")
+        val AUDIO_EXTENSIONS = setOf("mp3", "wav", "flac", "aac")
     }
 }

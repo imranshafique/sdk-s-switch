@@ -6,12 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.msn.dataselectionviewpager.R
 
-class DeviceListAdapter(private val onDeviceClick: (WifiP2pDevice) -> Unit) : RecyclerView.Adapter<DeviceListAdapter.DeviceViewHolder>() {
+class DeviceListAdapter(private val onDeviceClick: (WifiP2pDevice) -> Unit) :
+    ListAdapter<WifiP2pDevice, DeviceListAdapter.DeviceViewHolder>(DeviceDiffCallback) {
 
-    private var deviceList: List<WifiP2pDevice> = emptyList()
     private var selectedDevice: WifiP2pDevice? = null
 
     // ViewHolder class
@@ -25,7 +27,6 @@ class DeviceListAdapter(private val onDeviceClick: (WifiP2pDevice) -> Unit) : Re
             itemView.setOnClickListener {
                 selectedDevice = device
                 onDeviceClick(device) // Trigger the onDeviceClick callback
-                notifyDataSetChanged() // Notify that a selection has been made
             }
         }
     }
@@ -36,20 +37,24 @@ class DeviceListAdapter(private val onDeviceClick: (WifiP2pDevice) -> Unit) : Re
     }
 
     override fun onBindViewHolder(holder: DeviceViewHolder, position: Int) {
-        val device = deviceList[position]
+        val device = getItem(position)
         holder.bind(device)
     }
 
-    override fun getItemCount(): Int = deviceList.size
-
-    // Method to update the device list
     fun updateDeviceList(devices: List<WifiP2pDevice>) {
-        deviceList = devices
-        notifyDataSetChanged()
+        submitList(devices.toList())
     }
 
     // Method to get the selected device
     fun getSelectedDevice(): WifiP2pDevice? {
         return selectedDevice
+    }
+
+    private companion object DeviceDiffCallback : DiffUtil.ItemCallback<WifiP2pDevice>() {
+        override fun areItemsTheSame(oldItem: WifiP2pDevice, newItem: WifiP2pDevice) =
+            oldItem.deviceAddress == newItem.deviceAddress
+
+        override fun areContentsTheSame(oldItem: WifiP2pDevice, newItem: WifiP2pDevice) =
+            oldItem == newItem
     }
 }

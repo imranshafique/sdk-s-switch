@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>CyclomaticComplexMethod:DataReceiverManger.kt:DataReceiverManger$private fun receiveFile</ID>
+    <ID>LongMethod:DataReceiverManger.kt:DataReceiverManger$private fun receiveFile</ID>
+    <ID>LoopWithTooManyJumpStatements:FileTransferManager.kt:FileTransferSDK$for</ID>
+    <ID>MatchingDeclarationName:FileTransferManager.kt:FileTransferSDK</ID>
+    <ID>MayBeConstant:Utilities.kt:Utilities.Companion$val PORT = 8080</ID>
+    <ID>NestedBlockDepth:DataReceiverManger.kt:DataReceiverManger$private fun receiveFile</ID>
+    <ID>NestedBlockDepth:FileTransferManager.kt:FileTransferSDK$private fun sendData</ID>
+    <ID>NewLineAtEndOfFile:ConnectionCallBack.kt:com.msn.smartswitch.ServerClient.ConnectionCallBack.kt</ID>
+    <ID>NewLineAtEndOfFile:ExampleUnitTest.kt:com.msn.smartswitch.ExampleUnitTest.kt</ID>
+    <ID>PackageNaming:AppConstant.kt:package com.msn.smartswitch.Models</ID>
+    <ID>PackageNaming:ClientClass.kt:package com.msn.smartswitch.ServerClient</ID>
+    <ID>PackageNaming:ConnectionCallBack.kt:package com.msn.smartswitch.ServerClient</ID>
+    <ID>PackageNaming:DataReceiverManger.kt:package com.msn.smartswitch.Transfer</ID>
+    <ID>PackageNaming:FileTransferManager.kt:package com.msn.smartswitch.SenderConnectionClasses</ID>
+    <ID>PackageNaming:P2PConnectionManager.kt:package com.msn.smartswitch.SenderConnectionClasses</ID>
+    <ID>PackageNaming:ServerClass.kt:package com.msn.smartswitch.ServerClient</ID>
+    <ID>PackageNaming:Sockets.kt:package com.msn.smartswitch.ServerClient</ID>
+    <ID>PackageNaming:Utilities.kt:package com.msn.smartswitch.Models</ID>
+    <ID>ReturnCount:DataReceiverManger.kt:DataReceiverManger$private fun receiveFile</ID>
+    <ID>TooGenericExceptionCaught:ClientClass.kt:ClientClass$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:DataReceiverManger.kt:DataReceiverManger$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:FileTransferManager.kt:FileTransferSDK$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:P2PConnectionManager.kt:P2PConnectionManager$e: Exception</ID>
+    <ID>TooGenericExceptionCaught:ServerClass.kt:ServerClass$e: Exception</ID>
+    <ID>UtilityClassWithPublicConstructor:Utilities.kt:Utilities</ID>
+    <ID>VariableNaming:ClientClass.kt:ClientClass$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:DataReceiverManger.kt:DataReceiverManger$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:FileTransferManager.kt:FileTransferSDK$private val TAG = javaClass.simpleName</ID>
+    <ID>VariableNaming:P2PConnectionManager.kt:P2PConnectionManager$private val QR_CODE_SIZE = 200</ID>
+    <ID>VariableNaming:P2PConnectionManager.kt:P2PConnectionManager$private val TAG = "mavi"</ID>
+    <ID>VariableNaming:ServerClass.kt:ServerClass$private val TAG = javaClass.simpleName</ID>
+  </CurrentIssues>
+</SmellBaseline>

@@ -1,5 +1,8 @@
 *.iml
 .gradle
+/.lint-run*.log
+/app-lint*.log
+/.kotlin
 /local.properties
 /.idea/caches
 /.idea/libraries
@@ -12,4 +15,6 @@
 /captures
 .externalNativeBuild
 .cxx
+/.android-sdk
+/commandlinetools-win-*_latest.zip
 local.properties

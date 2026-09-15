@@ -1,0 +1,11 @@
+style:
+  MagicNumber:
+    active: false
+  WildcardImport:
+    active: false
+
+complexity:
+  LongMethod:
+    allowedLines: 80
+  LongParameterList:
+    allowedFunctionParameters: 8

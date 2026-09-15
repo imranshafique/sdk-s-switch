@@ -13,10 +13,8 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object GlideModule {
-
     @Provides
     @Singleton
-    fun provideGlide(@ApplicationContext context: Context): RequestManager {
-        return Glide.with(context)
-    }
+    fun provideRequestManager(@ApplicationContext context: Context): RequestManager =
+        Glide.with(context)
 }

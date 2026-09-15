@@ -68,7 +68,7 @@ class ImagesFragment : Fragment(R.layout.fragment_images) {
                         binding.recyclerView.visibility = View.VISIBLE
                     } else {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }

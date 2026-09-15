@@ -1,12 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.detekt)
     id("maven-publish")
 }
 
 android {
     namespace = "com.msn.smartswitch"
-    compileSdk = 34
+    compileSdk = 37
 
     defaultConfig {
         minSdk = 28
@@ -29,14 +29,29 @@ android {
         buildConfig=true
     }
 
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+    publishing {
+        singleVariant("release") {
+            withSourcesJar()
+        }
     }
 
-    kotlinOptions {
-        jvmTarget = "17"
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
+
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+    }
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+    baseline = file("config/detekt/detekt-baseline.xml")
 }
 // Publishing configuration
 afterEvaluate {
@@ -55,15 +70,10 @@ afterEvaluate {
 dependencies {
 
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.activity)
-    implementation(libs.androidx.constraintlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.journeyapps:zxing-android-embedded:4.3.0")
-    implementation("com.google.zxing:core:3.5.1")
+    implementation(libs.zxing.android.embedded)
+    implementation(libs.zxing.core)
 
 }

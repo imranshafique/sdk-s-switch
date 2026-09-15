@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.ImageView
@@ -15,6 +14,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.location.LocationManagerCompat.isLocationEnabled
 import androidx.viewpager2.widget.ViewPager2
 import com.msn.dataselectionviewpager.Activities.QrCodeGeneratorActivity
@@ -30,7 +30,6 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding:ActivityMainBinding
      private lateinit var adapter: FragmentAdapter
-     private var TAG = javaClass.simpleName
     private val sender_permissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         arrayOf(
             Manifest.permission.NEARBY_WIFI_DEVICES,
@@ -51,10 +50,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         locationManager =
             applicationContext.getSystemService(Context.LOCATION_SERVICE) as (LocationManager)
-        Log.d(TAG, "onCreate: selectedPath before: ${selectedPath.size}")
-
         selectedPath.clear()
-        Log.d(TAG, "onCreate: selectedPath: ${selectedPath.size}")
         // Set the adapter to ViewPager2
         adapter = FragmentAdapter(this)
         binding.viewPager.adapter = adapter
@@ -80,7 +76,7 @@ class MainActivity : AppCompatActivity() {
 
         // Create custom tabs for each fragment
         tabNames.forEachIndexed { index, tabName ->
-            val tabView = layoutInflater.inflate(R.layout.custom_tab, null) // Inflate custom tab layout
+            val tabView = layoutInflater.inflate(R.layout.custom_tab, binding.customTabContainer, false)
             val tabIcon: ImageView = tabView.findViewById(R.id.tabIcon)
             val tabText: TextView = tabView.findViewById(R.id.tabText)
             val tabIndicator: View = tabView.findViewById(R.id.tabIndicator)
@@ -123,12 +119,12 @@ class MainActivity : AppCompatActivity() {
 
             // Highlight selected tab
             if (i == position) {
-                tabIcon.setColorFilter(resources.getColor(android.R.color.holo_blue_dark))  // Change color for selected
-                tabText.setTextColor(resources.getColor(android.R.color.holo_blue_dark))    // Change text color for selected
+                tabIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
+                tabText.setTextColor(ContextCompat.getColor(this, android.R.color.holo_blue_dark))
                 tabIndicator.visibility = View.VISIBLE  // Show indicator
             } else {
-                tabIcon.setColorFilter(resources.getColor(android.R.color.darker_gray))    // Default color for unselected
-                tabText.setTextColor(resources.getColor(android.R.color.darker_gray))      // Default text color for unselected
+                tabIcon.setColorFilter(ContextCompat.getColor(this, android.R.color.darker_gray))
+                tabText.setTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
                 tabIndicator.visibility = View.GONE    // Hide indicator
             }
         }

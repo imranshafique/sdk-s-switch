@@ -106,7 +106,7 @@ class VideosFragment : Fragment(R.layout.fragment_videos) {
                         binding.videosRecyclerView.visibility = View.VISIBLE
                     } else {
                         isEnabled = false
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             }

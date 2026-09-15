@@ -3,6 +3,7 @@ package com.msn.dataselectionviewpager.Utils
 
 import android.Manifest
 import android.content.Context
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -40,7 +41,7 @@ class PermissionHelper(
                     data = Uri.parse("package:${context.packageName}")
                 }
                 requestManageStorageLauncher.launch(intent)
-            } catch (e: Exception) {
+            } catch (_: ActivityNotFoundException) {
                 Toast.makeText(context, "Error opening settings", Toast.LENGTH_SHORT).show()
             }
         } else {
